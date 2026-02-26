@@ -1,0 +1,13 @@
+{
+  "frontend/src/components/cart/CartItem.tsx": "Cart item row component displaying product image, title, price, quantity selector, subtotal, and remove button; uses `shrink-0` (Tailwind v3 compliant) instead of `flex-shrink-0`.",
+  "frontend/src/components/checkout/OrderSummary.tsx": "Checkout order summary card showing cart items with images, quantities, prices, subtotal, shipping, and total; uses `shrink-0` (Tailwind v3 compliant).",
+  "frontend/src/pages/ProductDetailPage.tsx": "Product detail page fetching a product by ID, displaying image with zoom, title, price, description, quantity selector, add-to-cart and buy-now buttons; removed conflicting `capitalize` class from the category label (keeping only `uppercase`).",
+  "frontend/src/pages/ThankYouPage.tsx": "Order confirmation page with animated scale-in reveal, order ID display, next-steps info cards, and navigation links back to home/products; uses `shrink-0` (Tailwind v3 compliant).",
+  "frontend/src/pages/CustomOrderPage.tsx": "Custom order request page with a full form collecting product type, color, size, description, inspiration image upload (with preview and base64 conversion), budget range, and email; submits to backend and shows a success confirmation screen.",
+  "frontend/src/pages/ReturnsPage.tsx": "Returns & Exchanges page with a policy section (4 policy cards) and a return request form collecting order ID, email, reason dropdown, and description; submits to backend and shows confirmation.",
+  "frontend/src/pages/AdminPage.tsx": "Admin panel page with a passcode gate (checking against `knotankey_admin_2026`) and a tabbed dashboard for Products, Orders, Custom Orders, and Return Requests management.",
+  "frontend/src/components/admin/AdminProductsManagement.tsx": "Admin products tab with full CRUD — lists all products with edit/delete/bestseller-toggle actions, and an inline add/edit form with image upload support.",
+  "frontend/src/components/admin/AdminOrdersManagement.tsx": "Admin orders tab displaying all orders with customer info, items, total, date, and an inline status update dropdown.",
+  "frontend/src/components/admin/AdminCustomOrdersViewer.tsx": "Admin custom orders tab showing all custom order requests in a card grid with all fields including inspiration image preview.",
+  "frontend/src/components/admin/AdminReturnRequestsViewer.tsx": "Admin return requests tab listing all return submissions with order ID, email, reason badge, date, and description."
+}
