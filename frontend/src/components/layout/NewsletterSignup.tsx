@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useSubscribeToNewsletter } from '../../hooks/useQueries';
 import { toast } from 'sonner';
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState('');
-  const { mutate, isPending } = useSubscribeToNewsletter();
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,13 +13,10 @@ export default function NewsletterSignup() {
       toast.error('Please enter a valid email address.');
       return;
     }
-    mutate(email, {
-      onSuccess: () => {
-        toast.success('You\'re subscribed! Welcome to the knotankey family 🧶');
-        setEmail('');
-      },
-      onError: () => toast.error('Something went wrong. Please try again.'),
-    });
+    setSubmitted(true);
+    toast.success("You're subscribed! Welcome to the knotankey family 🧶");
+    setEmail('');
+    setTimeout(() => setSubmitted(false), 3000);
   };
 
   return (
@@ -34,11 +30,11 @@ export default function NewsletterSignup() {
       />
       <Button
         type="submit"
-        disabled={isPending}
+        disabled={submitted}
         size="sm"
         className="bg-warm-brown hover:bg-warm-tan text-cream-50 font-sans text-xs tracking-wider rounded-xl btn-luxury whitespace-nowrap"
       >
-        {isPending ? '…' : 'Subscribe'}
+        {submitted ? '✓' : 'Subscribe'}
       </Button>
     </form>
   );

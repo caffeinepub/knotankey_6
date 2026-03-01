@@ -1,93 +1,65 @@
-import { useState } from 'react';
-import { Shield, LogOut, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import AdminProductsManagement from '../components/admin/AdminProductsManagement';
-import AdminOrdersManagement from '../components/admin/AdminOrdersManagement';
-import AdminCustomOrdersViewer from '../components/admin/AdminCustomOrdersViewer';
-import AdminReturnRequestsViewer from '../components/admin/AdminReturnRequestsViewer';
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import AdminProductsManagement from "@/components/admin/AdminProductsManagement";
+import AdminOrdersManagement from "@/components/admin/AdminOrdersManagement";
+import AdminCustomOrdersViewer from "@/components/admin/AdminCustomOrdersViewer";
+import AdminReturnRequestsViewer from "@/components/admin/AdminReturnRequestsViewer";
+import { Lock, ShieldCheck } from "lucide-react";
 
-const ADMIN_PASSCODE = 'knotankey_admin_2026';
+const ADMIN_PASSCODE = "knotankey_admin_2026";
 
 export default function AdminPage() {
-  const [passcode, setPasscode] = useState('');
+  const [passcode, setPasscode] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
-  const [storedPasscode, setStoredPasscode] = useState('');
-  const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [checking, setChecking] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setChecking(true);
-    setTimeout(() => {
-      if (passcode === ADMIN_PASSCODE) {
-        setAuthenticated(true);
-        setStoredPasscode(passcode);
-        setError('');
-      } else {
-        setError('Incorrect passcode. Please try again.');
-      }
-      setChecking(false);
-    }, 400);
-  };
-
-  const handleLogout = () => {
-    setAuthenticated(false);
-    setStoredPasscode('');
-    setPasscode('');
+    if (passcode === ADMIN_PASSCODE) {
+      setAuthenticated(true);
+      setError("");
+    } else {
+      setError("Incorrect passcode. Please try again.");
+    }
   };
 
   if (!authenticated) {
     return (
-      <div className="pt-20 min-h-screen flex items-center justify-center px-4">
-        <div className="w-full max-w-sm animate-fade-up">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-cream-200 flex items-center justify-center mx-auto mb-4 shadow-soft">
-              <Shield className="w-8 h-8 text-warm-brown" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+              <Lock className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="font-serif text-3xl text-warm-brown mb-1">Admin Access</h1>
-            <p className="font-sans text-sm text-warm-tan">Enter your passcode to continue</p>
+            <h1 className="text-2xl font-bold text-foreground font-serif">
+              Admin Access
+            </h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              Enter your passcode to continue
+            </p>
           </div>
 
-          <form
-            onSubmit={handleLogin}
-            className="bg-card rounded-3xl shadow-soft border border-cream-300 p-8 space-y-5"
-          >
-            <div>
-              <Label className="font-sans text-xs tracking-wider uppercase text-warm-tan mb-2 block">
-                Admin Passcode
-              </Label>
-              <div className="relative">
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  value={passcode}
-                  onChange={e => { setPasscode(e.target.value); setError(''); }}
-                  placeholder="Enter passcode"
-                  className={`bg-cream-50 border-cream-300 rounded-xl font-sans text-sm text-warm-brown pr-10 ${
-                    error ? 'border-destructive' : ''
-                  }`}
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-tan hover:text-warm-brown transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {error && <p className="font-sans text-xs text-destructive mt-1">{error}</p>}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="passcode">Passcode</Label>
+              <Input
+                id="passcode"
+                type="password"
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                placeholder="Enter admin passcode"
+                required
+              />
             </div>
-
-            <button
-              type="submit"
-              disabled={checking || !passcode}
-              className="w-full flex items-center justify-center gap-2 py-3.5 bg-warm-brown text-cream-50 font-sans text-sm tracking-wider uppercase rounded-full btn-luxury hover:bg-warm-tan transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {checking ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enter Dashboard'}
-            </button>
+            {error && (
+              <p className="text-sm text-destructive">{error}</p>
+            )}
+            <Button type="submit" className="w-full">
+              Access Dashboard
+            </Button>
           </form>
         </div>
       </div>
@@ -95,64 +67,56 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="pt-20 min-h-screen">
-      {/* Header */}
-      <div className="bg-cream-200 py-10 px-4 border-b border-cream-300">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <p className="font-sans text-xs tracking-[0.3em] uppercase text-warm-tan mb-1">Protected Area</p>
-            <h1 className="font-serif text-3xl text-warm-brown">Admin Dashboard</h1>
+    <div className="min-h-screen bg-background pt-24 pb-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="w-7 h-7 text-primary" />
+            <div>
+              <h1 className="text-2xl font-bold text-foreground font-serif">
+                Admin Dashboard
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Manage your knotankey store
+              </p>
+            </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 font-sans text-sm text-warm-tan hover:text-warm-brown transition-colors border border-cream-300 px-4 py-2 rounded-full hover:bg-cream-200"
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setAuthenticated(false);
+              setPasscode("");
+            }}
           >
-            <LogOut className="w-4 h-4" />
             Sign Out
-          </button>
+          </Button>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Tabs */}
         <Tabs defaultValue="products">
-          <TabsList className="bg-cream-200 border border-cream-300 rounded-2xl p-1 mb-8 flex flex-wrap gap-1 h-auto">
-            <TabsTrigger
-              value="products"
-              className="font-sans text-sm rounded-xl data-[state=active]:bg-warm-brown data-[state=active]:text-cream-50 text-warm-tan"
-            >
-              Products
-            </TabsTrigger>
-            <TabsTrigger
-              value="orders"
-              className="font-sans text-sm rounded-xl data-[state=active]:bg-warm-brown data-[state=active]:text-cream-50 text-warm-tan"
-            >
-              Orders
-            </TabsTrigger>
-            <TabsTrigger
-              value="custom-orders"
-              className="font-sans text-sm rounded-xl data-[state=active]:bg-warm-brown data-[state=active]:text-cream-50 text-warm-tan"
-            >
-              Custom Orders
-            </TabsTrigger>
-            <TabsTrigger
-              value="returns"
-              className="font-sans text-sm rounded-xl data-[state=active]:bg-warm-brown data-[state=active]:text-cream-50 text-warm-tan"
-            >
-              Return Requests
-            </TabsTrigger>
+          <TabsList className="mb-6 flex flex-wrap h-auto gap-1">
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="custom-orders">Custom Orders</TabsTrigger>
+            <TabsTrigger value="returns">Returns</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products">
-            <AdminProductsManagement passcode={storedPasscode} />
+            <AdminProductsManagement passcode={ADMIN_PASSCODE} />
           </TabsContent>
+
           <TabsContent value="orders">
-            <AdminOrdersManagement passcode={storedPasscode} />
+            <AdminOrdersManagement passcode={ADMIN_PASSCODE} />
           </TabsContent>
+
           <TabsContent value="custom-orders">
-            <AdminCustomOrdersViewer passcode={storedPasscode} />
+            <AdminCustomOrdersViewer passcode={ADMIN_PASSCODE} />
           </TabsContent>
+
           <TabsContent value="returns">
-            <AdminReturnRequestsViewer passcode={storedPasscode} />
+            <AdminReturnRequestsViewer passcode={ADMIN_PASSCODE} />
           </TabsContent>
         </Tabs>
       </div>

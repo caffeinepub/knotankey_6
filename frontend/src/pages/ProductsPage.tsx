@@ -1,177 +1,222 @@
-import { useState } from 'react';
-import { useGetProducts } from '../hooks/useQueries';
-import { useProductFilters, FilterState } from '../hooks/useProductFilters';
-import ProductCard from '../components/ProductCard';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { useState, useMemo } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { useGetProducts } from "@/hooks/useQueries";
+import ProductCard from "@/components/ProductCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 
-const DEFAULT_FILTERS: FilterState = {
-  category: '',
-  minPrice: 0,
-  maxPrice: 0,
-  bestseller: false,
-  sort: 'newest',
-};
+const CATEGORIES = ["All", "Accessories", "Home Décor", "Wearables", "Bags"];
 
 export default function ProductsPage() {
-  const { data: products = [], isLoading } = useGetProducts();
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const navigate = useNavigate();
+  const { data: products, isLoading, isError } = useGetProducts();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
-  const filtered = useProductFilters(products, filters);
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+    return products.filter((product) => {
+      const matchesSearch =
+        !searchQuery ||
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-  const categories = [...new Set(products.map(p => p.category))];
+      const matchesCategory =
+        selectedCategory === "All" || product.category === selectedCategory;
 
-  const updateFilter = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+      const priceInRupees = Number(product.price);
+      const matchesMinPrice = !minPrice || priceInRupees >= Number(minPrice);
+      const matchesMaxPrice = !maxPrice || priceInRupees <= Number(maxPrice);
+
+      return (
+        matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice
+      );
+    });
+  }, [products, searchQuery, selectedCategory, minPrice, maxPrice]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedCategory("All");
+    setMinPrice("");
+    setMaxPrice("");
   };
 
-  const resetFilters = () => setFilters(DEFAULT_FILTERS);
-  const hasActiveFilters = filters.category || filters.minPrice > 0 || filters.maxPrice > 0 || filters.bestseller;
+  const hasActiveFilters =
+    searchQuery ||
+    selectedCategory !== "All" ||
+    minPrice ||
+    maxPrice;
 
   return (
-    <div className="pt-20 min-h-screen">
+    <div className="min-h-screen bg-background pt-20">
       {/* Header */}
-      <div className="bg-cream-200 py-16 px-4 text-center border-b border-cream-300">
-        <p className="font-sans text-xs tracking-[0.3em] uppercase text-warm-tan mb-3">Our Collection</p>
-        <h1 className="font-serif text-5xl text-warm-brown">All Products</h1>
-        <div className="w-16 h-px bg-warm-tan mx-auto mt-4" />
+      <div className="bg-secondary/30 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl font-bold text-foreground font-serif mb-3">
+            Our Collection
+          </h1>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Explore our handcrafted crochet pieces — each one made with love and
+            care.
+          </p>
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 font-sans text-sm text-warm-brown border border-cream-300 px-4 py-2 rounded-full hover:bg-cream-200 transition-colors duration-300"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              Filters
-              {hasActiveFilters && (
-                <span className="w-2 h-2 rounded-full bg-warm-brown" />
-              )}
-            </button>
-            {hasActiveFilters && (
-              <button
-                onClick={resetFilters}
-                className="flex items-center gap-1 font-sans text-xs text-warm-tan hover:text-warm-brown transition-colors"
-              >
-                <X className="w-3 h-3" /> Clear
-              </button>
-            )}
-            <span className="font-sans text-sm text-warm-tan">
-              {filtered.length} {filtered.length === 1 ? 'product' : 'products'}
-            </span>
+        {/* Search & Filter Bar */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
           </div>
-
-          <Select value={filters.sort} onValueChange={v => updateFilter('sort', v as FilterState['sort'])}>
-            <SelectTrigger className="w-48 bg-cream-50 border-cream-300 rounded-xl font-sans text-sm text-warm-brown">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest</SelectItem>
-              <SelectItem value="price-asc">Price: Low to High</SelectItem>
-              <SelectItem value="price-desc">Price: High to Low</SelectItem>
-            </SelectContent>
-          </Select>
+          <Button
+            variant="outline"
+            onClick={() => setShowFilters(!showFilters)}
+            className="gap-2"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            Filters
+            {hasActiveFilters && (
+              <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                !
+              </Badge>
+            )}
+          </Button>
+          {hasActiveFilters && (
+            <Button variant="ghost" onClick={clearFilters} className="gap-2">
+              <X className="w-4 h-4" />
+              Clear
+            </Button>
+          )}
         </div>
 
-        {/* Filter panel */}
+        {/* Filters Panel */}
         {showFilters && (
-          <div className="bg-cream-50 border border-cream-300 rounded-3xl p-6 mb-8 animate-fade-in">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              <div>
-                <Label className="font-sans text-xs tracking-wider uppercase text-warm-tan mb-2 block">Category</Label>
-                <Select value={filters.category} onValueChange={v => updateFilter('category', v === 'all' ? '' : v)}>
-                  <SelectTrigger className="bg-white border-cream-300 rounded-xl font-sans text-sm text-warm-brown">
-                    <SelectValue placeholder="All categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All categories</SelectItem>
-                    {categories.map(cat => (
-                      <SelectItem key={cat} value={cat} className="capitalize">{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          <div className="bg-card border border-border rounded-xl p-5 mb-6 space-y-4">
+            {/* Categories */}
+            <div>
+              <p className="text-sm font-semibold text-foreground mb-2">
+                Category
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                      selectedCategory === cat
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background text-foreground border-border hover:border-primary"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <div>
-                <Label className="font-sans text-xs tracking-wider uppercase text-warm-tan mb-2 block">Min Price ($)</Label>
+            {/* Price Range */}
+            <div>
+              <p className="text-sm font-semibold text-foreground mb-2">
+                Price Range (₹)
+              </p>
+              <div className="flex gap-3 items-center">
                 <Input
                   type="number"
-                  min={0}
-                  value={filters.minPrice || ''}
-                  onChange={e => updateFilter('minPrice', Number(e.target.value))}
-                  placeholder="0"
-                  className="bg-white border-cream-300 rounded-xl font-sans text-sm text-warm-brown"
+                  placeholder="Min (₹)"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="w-32"
                 />
-              </div>
-
-              <div>
-                <Label className="font-sans text-xs tracking-wider uppercase text-warm-tan mb-2 block">Max Price ($)</Label>
+                <span className="text-muted-foreground">–</span>
                 <Input
                   type="number"
-                  min={0}
-                  value={filters.maxPrice || ''}
-                  onChange={e => updateFilter('maxPrice', Number(e.target.value))}
-                  placeholder="Any"
-                  className="bg-white border-cream-300 rounded-xl font-sans text-sm text-warm-brown"
+                  placeholder="Max (₹)"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="w-32"
                 />
-              </div>
-
-              <div className="flex items-center gap-3 pt-6">
-                <Switch
-                  id="bestseller-filter"
-                  checked={filters.bestseller}
-                  onCheckedChange={v => updateFilter('bestseller', v)}
-                />
-                <Label htmlFor="bestseller-filter" className="font-sans text-sm text-warm-brown cursor-pointer">
-                  Bestsellers only
-                </Label>
               </div>
             </div>
           </div>
         )}
 
-        {/* Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="rounded-3xl overflow-hidden">
-                <Skeleton className="aspect-square w-full" />
-                <div className="p-5 space-y-2">
-                  <Skeleton className="h-5 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filtered.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map((product, i) => (
-              <div
-                key={product.id}
-                className="animate-fade-up"
-                style={{ animationDelay: `${Math.min(i * 0.05, 0.4)}s`, animationFillMode: 'both' }}
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-24">
-            <p className="font-serif text-2xl text-warm-tan mb-3">No products found</p>
-            <p className="font-sans text-sm text-warm-tan/70">Try adjusting your filters</p>
-            <button onClick={resetFilters} className="mt-4 font-sans text-sm text-warm-brown underline underline-offset-4">
-              Clear all filters
+        {/* Category Pills (always visible) */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                selectedCategory === cat
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-background text-foreground border-border hover:border-primary"
+              }`}
+            >
+              {cat}
             </button>
+          ))}
+        </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="h-64 w-full rounded-xl" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            ))}
           </div>
+        )}
+
+        {/* Error State */}
+        {isError && (
+          <div className="text-center py-20 text-muted-foreground">
+            <p className="text-lg">
+              Unable to load products. Please try again later.
+            </p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && !isError && filteredProducts.length === 0 && (
+          <div className="text-center py-20 text-muted-foreground">
+            <p className="text-lg mb-4">No products found.</p>
+            {hasActiveFilters && (
+              <Button variant="outline" onClick={clearFilters}>
+                Clear Filters
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {!isLoading && !isError && filteredProducts.length > 0 && (
+          <>
+            <p className="text-sm text-muted-foreground mb-4">
+              Showing {filteredProducts.length} product
+              {filteredProducts.length !== 1 ? "s" : ""}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -14,10 +14,6 @@ export class ExternalBlob {
     static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
     withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
 }
-export interface NewsletterSubscriber {
-    subscribedAt: Time;
-    email: string;
-}
 export interface CustomerInfo {
     country: string;
     city: string;
@@ -28,6 +24,11 @@ export interface CustomerInfo {
     phone: string;
 }
 export type Time = bigint;
+export interface WishlistItem {
+    productId: string;
+    email: string;
+    addedAt: Time;
+}
 export interface OrderItem {
     title: string;
     productId: string;
@@ -72,20 +73,22 @@ export interface Product {
     bestseller: boolean;
 }
 export interface backendInterface {
+    addToWishlist(email: string, productId: string): Promise<void>;
     createCustomOrderRequest(request: CustomOrderRequest): Promise<void>;
     createOrder(order: Order): Promise<string>;
     createProduct(passcode: string, product: Product): Promise<void>;
     createReturnRequest(request: ReturnRequest): Promise<void>;
     deleteProduct(passcode: string, productId: string): Promise<void>;
+    filterProductsByCategory(category: string): Promise<Array<Product>>;
+    getBestSellers(): Promise<Array<Product>>;
     getCustomOrderRequests(passcode: string): Promise<Array<CustomOrderRequest>>;
     getOrderById(orderId: string): Promise<Order>;
     getOrders(passcode: string): Promise<Array<Order>>;
     getProductById(productId: string): Promise<Product>;
     getProducts(): Promise<Array<Product>>;
     getReturnRequests(passcode: string): Promise<Array<ReturnRequest>>;
-    getSubscribers(passcode: string): Promise<Array<NewsletterSubscriber>>;
-    removeSubscriber(passcode: string, email: string): Promise<void>;
-    subscribeToNewsletter(email: string): Promise<void>;
+    getWishlist(email: string): Promise<Array<WishlistItem>>;
+    removeFromWishlist(email: string, productId: string): Promise<void>;
     updateOrderStatus(passcode: string, orderId: string, status: string): Promise<void>;
     updateProduct(passcode: string, product: Product): Promise<void>;
 }

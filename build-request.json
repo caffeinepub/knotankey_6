@@ -1,69 +1,33 @@
 {
   "kind": "build_request",
-  "title": "Add Payment via Email messaging to Checkout and Thank You pages",
-  "projectName": "Knotankey Store",
+  "title": "Remove SVG icon from header button",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "On the CheckoutPage, add a 'Secure Payment Process' notice box positioned between the Order Total display and the Place Order button. The box must have a background color of #F8F5F0 (very light beige), rounded corners, a small lock icon on the left, and comfortable vertical margin above and below. The title text should read 'Secure Payment Process' and the body should read: 'After placing your order, we will send a secure payment link to your email. Payment will be completed securely through that link to confirm your order.' All typography and styling must match the existing knotankey soft luxury aesthetic.",
+      "text": "In the Navbar component, remove the SVG icon element inside the first button in the header's top-left area. The button element itself should remain, but the inner <svg> (and its wrapping <span> if it becomes empty) should be completely removed.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-payment-email"
+          "msg-4"
         ],
         "quotes": [
-          "Below the Order Total and above the Place Order button, add a notice box",
-          "Secure Payment Process",
-          "After placing your order, we will send a secure payment link to your email.",
-          "Background color: very light beige (#F8F5F0)",
-          "Rounded corners",
-          "Small lock icon on the left"
+          "remove this completely"
         ]
       },
       "acceptanceCriteria": [
-        "Notice box appears between the Order Total and Place Order button on the checkout page",
-        "Background color is #F8F5F0",
-        "Box has rounded corners",
-        "A small lock icon is visible on the left side of the notice",
-        "Title reads 'Secure Payment Process'",
-        "Body text reads 'After placing your order, we will send a secure payment link to your email. Payment will be completed securely through that link to confirm your order.'",
-        "Adequate vertical margin ensures the box does not appear cramped",
-        "Styling is consistent with the knotankey soft luxury aesthetic"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "On the ThankYouPage (order confirmation page), add a payment instructions message block displayed below the existing order confirmation message. The message should read: 'Your order has been received. We will review your order and send a secure payment link to your email shortly to complete the purchase. Please complete the payment through that link to confirm your order.' Style this message to match the soft luxury knotankey aesthetic, consistent with the notice box added on the checkout page.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-payment-email"
-        ],
-        "quotes": [
-          "On the order confirmation / thank you page, display this message under the confirmation message.",
-          "Your order has been received. We will review your order and send a secure payment link to your email shortly to complete the purchase.",
-          "Please complete the payment through that link to confirm your order."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Payment instructions block appears below the main confirmation message on the ThankYouPage",
-        "Text includes 'Your order has been received. We will review your order and send a secure payment link to your email shortly to complete the purchase.'",
-        "Text includes 'Please complete the payment through that link to confirm your order.'",
-        "Styling is consistent with the knotankey soft luxury aesthetic and the checkout page notice box"
+        "The SVG icon previously inside the header button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[1]/div[1]/button[1]/span[1]/svg[1] is no longer rendered",
+        "No broken layout or empty space is introduced where the SVG was",
+        "The rest of the Navbar remains visually and functionally unchanged"
       ]
     }
   ],
   "constraints": [
-    "Do not modify any backend files — this is a frontend-only change",
-    "Do not alter the existing order submission or routing logic in CheckoutPage",
-    "Immutable paths (frontend/src/hooks/, frontend/src/main.tsx, frontend/src/components/ui) must not be modified"
+    "Do not remove the button element itself, only its inner SVG (and any now-empty wrapping span)"
   ],
   "nonGoals": [
-    "Implementing actual email sending or payment link generation",
-    "Integrating any payment gateway or Stripe",
-    "Modifying order data models or backend endpoints",
-    "Changing any other pages beyond CheckoutPage and ThankYouPage"
+    "Modifying any other part of the Navbar or header",
+    "Changing button functionality or click handlers"
   ],
   "imageRequirements": {
     "required": [],

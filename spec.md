@@ -1,11 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Add payment-via-email messaging to the Checkout and Thank You pages to inform customers how payment will be processed.
+**Goal:** Remove the SVG icon from inside a specific header button in the Navbar component.
 
 **Planned changes:**
-- On the CheckoutPage, add a "Secure Payment Process" notice box between the Order Total and the Place Order button, styled with a #F8F5F0 beige background, rounded corners, a small lock icon on the left, and body text explaining that a secure payment link will be sent via email.
-- On the ThankYouPage, add a payment instructions message block below the existing order confirmation message, informing the customer that a secure payment link will be sent to their email shortly.
-- Both additions must match the existing knotankey soft luxury aesthetic.
+- Remove the `<svg>` element (and its wrapping `<span>` if it becomes empty) from inside the first button in the header's top-left area of the Navbar
+- Keep the button element itself intact
 
-**User-visible outcome:** Customers see a clear, on-brand notice during checkout and after placing an order explaining that payment will be completed via a secure link sent to their email.
+**User-visible outcome:** The header button no longer displays the SVG icon, with no broken layout or empty space left behind.

@@ -1,13 +1,10 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
-import { Mail, Instagram, Heart, Loader2 } from "lucide-react";
+import { Mail, Instagram } from "lucide-react";
 import { SiPinterest } from "react-icons/si";
-import { toast } from "sonner";
-import { useSubscribeToNewsletter } from "../../hooks/useQueries";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const appId = encodeURIComponent(window.location.hostname || "knotankey");
 
   return (
     <>
@@ -30,7 +27,7 @@ export default function Footer() {
       >
         <div className="max-w-6xl mx-auto px-4">
           {/* Main Footer Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
             {/* Brand Column */}
             <div className="md:col-span-1">
               <h3 className="font-display text-2xl font-bold text-footer-heading mb-3 tracking-wide">
@@ -116,21 +113,6 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <a href="/products?category=accessories" className="hover:text-footer-heading transition-colors">
-                    Accessories
-                  </a>
-                </li>
-                <li>
-                  <a href="/products?category=home" className="hover:text-footer-heading transition-colors">
-                    Home Décor
-                  </a>
-                </li>
-                <li>
-                  <a href="/products?category=wearables" className="hover:text-footer-heading transition-colors">
-                    Wearables
-                  </a>
-                </li>
-                <li>
                   <Link to="/custom-order" className="hover:text-footer-heading transition-colors">
                     Custom Orders
                   </Link>
@@ -165,32 +147,6 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-
-            {/* Newsletter Column */}
-            <div>
-              <h4 className="font-semibold text-footer-heading text-sm uppercase tracking-widest mb-4">
-                Stay Connected
-              </h4>
-              <p className="text-sm text-footer-muted mb-4">
-                New drops, behind-the-scenes, and unboxing videos (only when available) — straight to your inbox.
-              </p>
-              <NewsletterForm />
-            </div>
-          </div>
-
-          {/* Caffeine attribution divider */}
-          <div className="border-t border-footer-border pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-footer-muted">
-            <span className="flex items-center gap-1">
-              Built with <Heart size={12} className="text-rose-400 fill-rose-400" /> using{" "}
-              <a
-                href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-footer-heading transition-colors"
-              >
-                caffeine.ai
-              </a>
-            </span>
           </div>
 
           {/* Copyright line */}
@@ -208,60 +164,5 @@ export default function Footer() {
         </div>
       </footer>
     </>
-  );
-}
-
-function NewsletterForm() {
-  const [email, setEmail] = React.useState("");
-  const [subscribed, setSubscribed] = React.useState(false);
-  const subscribe = useSubscribeToNewsletter();
-
-  function isValidEmail(value: string) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email || !isValidEmail(email)) {
-      toast.error("Please enter a valid email address.");
-      return;
-    }
-    try {
-      await subscribe.mutateAsync(email);
-      setSubscribed(true);
-      setEmail("");
-      toast.success("You're subscribed! Welcome to the knotankey family 🎉");
-    } catch {
-      toast.error("Something went wrong. Please try again.");
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="your@email.com"
-        className="px-3 py-2 rounded-lg bg-footer-input border border-footer-border text-footer-foreground placeholder:text-footer-muted text-sm focus:outline-none focus:ring-2 focus:ring-footer-ring"
-        disabled={subscribe.isPending || subscribed}
-      />
-      <button
-        type="submit"
-        disabled={subscribe.isPending || subscribed}
-        className="px-4 py-2 rounded-lg bg-footer-btn text-footer-btn-text text-sm font-semibold hover:bg-footer-btn-hover transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
-      >
-        {subscribe.isPending ? (
-          <>
-            <Loader2 size={14} className="animate-spin" />
-            Subscribing…
-          </>
-        ) : subscribed ? (
-          "Subscribed! 🎉"
-        ) : (
-          "Subscribe"
-        )}
-      </button>
-    </form>
   );
 }

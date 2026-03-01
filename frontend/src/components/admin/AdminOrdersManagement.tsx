@@ -1,113 +1,175 @@
-import { useGetOrders, useUpdateOrderStatus } from '../../hooks/useQueries';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
-import { Package } from 'lucide-react';
-import type { Order } from '../../backend';
-import { formatINR } from '../../utils/currency';
+import { useState } from "react";
+import { useGetOrders, useUpdateOrderStatus } from "@/hooks/useQueries";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { formatINR } from "@/utils/currency";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
-interface AdminOrdersManagementProps {
+interface Props {
   passcode: string;
 }
 
-const STATUS_OPTIONS = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+const ORDER_STATUSES = [
+  "pending",
+  "confirmed",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+];
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-cream-300 text-warm-brown',
-  processing: 'bg-warm-sand/30 text-warm-brown',
-  shipped: 'bg-warm-tan/20 text-warm-brown',
-  delivered: 'bg-warm-brown/20 text-warm-brown',
-  cancelled: 'bg-destructive/10 text-destructive',
+  pending: "bg-yellow-100 text-yellow-800",
+  confirmed: "bg-blue-100 text-blue-800",
+  processing: "bg-purple-100 text-purple-800",
+  shipped: "bg-indigo-100 text-indigo-800",
+  delivered: "bg-green-100 text-green-800",
+  cancelled: "bg-red-100 text-red-800",
 };
 
-export default function AdminOrdersManagement({ passcode }: AdminOrdersManagementProps) {
-  const { data: orders = [], isLoading } = useGetOrders(passcode);
-  const { mutate: updateStatus, isPending } = useUpdateOrderStatus();
+export default function AdminOrdersManagement({ passcode }: Props) {
+  const { data: orders, isLoading, isError } = useGetOrders(passcode);
+  const updateStatus = useUpdateOrderStatus();
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
-  const handleStatusChange = (orderId: string, status: string) => {
-    updateStatus({ passcode, orderId, status }, {
-      onSuccess: () => toast.success('Order status updated!'),
-      onError: () => toast.error('Failed to update status.'),
-    });
-  };
-
-  const formatDate = (ts: bigint) => {
-    return new Date(Number(ts) / 1_000_000).toLocaleDateString('en-IN', {
-      year: 'numeric', month: 'short', day: 'numeric',
-    });
+  const handleStatusChange = async (orderId: string, status: string) => {
+    setUpdatingOrderId(orderId);
+    try {
+      await updateStatus.mutateAsync({ passcode, orderId, status });
+      toast.success("Order status updated.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update order status.");
+    } finally {
+      setUpdatingOrderId(null);
+    }
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-serif text-2xl text-warm-brown">Orders ({orders.length})</h2>
+        <h2 className="text-xl font-semibold text-foreground">
+          Orders ({orders?.length ?? 0})
+        </h2>
       </div>
 
-      {isLoading ? (
+      {isLoading && (
         <div className="space-y-3">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 w-full rounded-2xl" />)}
-        </div>
-      ) : orders.length === 0 ? (
-        <div className="text-center py-16 bg-cream-50 rounded-3xl border border-cream-300">
-          <Package className="w-12 h-12 text-cream-300 mx-auto mb-3" />
-          <p className="font-serif text-xl text-warm-tan">No orders yet</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {orders.map((order: Order) => (
-            <div key={order.id} className="bg-card rounded-2xl border border-cream-300 p-5">
-              <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="font-sans text-sm font-medium text-warm-brown">{order.id}</p>
-                    <span className={`text-xs font-sans px-2 py-0.5 rounded-full ${STATUS_COLORS[order.status] ?? 'bg-cream-200 text-warm-tan'}`}>
-                      {order.status}
-                    </span>
-                  </div>
-                  <p className="font-sans text-sm text-warm-tan">
-                    {order.customerInfo.fullName} · {order.customerInfo.email}
-                  </p>
-                  <p className="font-sans text-xs text-warm-tan/70">
-                    {order.customerInfo.city}, {order.customerInfo.country} · {formatDate(order.createdAt)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-serif text-xl text-warm-brown">
-                    {formatINR(Number(order.total) / 100)}
-                  </p>
-                  <p className="font-sans text-xs text-warm-tan">{order.items.length} item(s)</p>
-                </div>
-              </div>
-
-              {/* Items */}
-              <div className="mb-4 space-y-1">
-                {order.items.map((item, i) => (
-                  <p key={i} className="font-sans text-xs text-warm-tan">
-                    {item.title} × {Number(item.quantity)} — {formatINR(Number(item.price) / 100)} each
-                  </p>
-                ))}
-              </div>
-
-              {/* Status update */}
-              <div className="flex items-center gap-3">
-                <span className="font-sans text-xs uppercase tracking-wider text-warm-tan">Update Status:</span>
-                <Select
-                  value={order.status}
-                  onValueChange={v => handleStatusChange(order.id, v)}
-                  disabled={isPending}
-                >
-                  <SelectTrigger className="w-40 bg-cream-50 border-cream-300 rounded-xl font-sans text-xs text-warm-brown h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUS_OPTIONS.map(s => (
-                      <SelectItem key={s} value={s} className="font-sans text-sm capitalize">{s}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 w-full rounded-xl" />
           ))}
+        </div>
+      )}
+
+      {isError && (
+        <div className="text-center py-10 text-muted-foreground">
+          Failed to load orders. Please refresh.
+        </div>
+      )}
+
+      {!isLoading && !isError && orders && orders.length === 0 && (
+        <div className="text-center py-10 text-muted-foreground">
+          No orders yet.
+        </div>
+      )}
+
+      {!isLoading && !isError && orders && orders.length > 0 && (
+        <div className="space-y-4">
+          {[...orders]
+            .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
+            .map((order) => (
+              <div
+                key={order.id}
+                className="bg-card border border-border rounded-xl p-5"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">
+                      {order.id}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {order.customerInfo.fullName} ·{" "}
+                      {order.customerInfo.email}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {new Date(
+                        Number(order.createdAt) / 1_000_000
+                      ).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold text-foreground">
+                      {formatINR(Number(order.total))}
+                    </span>
+                    <div className="relative">
+                      {updatingOrderId === order.id ? (
+                        <div className="flex items-center gap-2 px-3 py-2 border border-border rounded-md text-sm">
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          Updating…
+                        </div>
+                      ) : (
+                        <Select
+                          value={order.status}
+                          onValueChange={(val) =>
+                            handleStatusChange(order.id, val)
+                          }
+                        >
+                          <SelectTrigger className="w-36 h-8 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ORDER_STATUSES.map((s) => (
+                              <SelectItem key={s} value={s} className="text-xs">
+                                {s.charAt(0).toUpperCase() + s.slice(1)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Order Items */}
+                <div className="border-t border-border pt-3 space-y-1">
+                  {order.items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex justify-between text-sm text-muted-foreground"
+                    >
+                      <span>
+                        {item.title} × {String(item.quantity)}
+                      </span>
+                      <span>
+                        {formatINR(Number(item.price) * Number(item.quantity))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Shipping Address */}
+                <div className="border-t border-border pt-3 mt-3">
+                  <p className="text-xs text-muted-foreground">
+                    📦 {order.customerInfo.address}, {order.customerInfo.city},{" "}
+                    {order.customerInfo.postalCode},{" "}
+                    {order.customerInfo.country} · 📞{" "}
+                    {order.customerInfo.phone}
+                  </p>
+                </div>
+              </div>
+            ))}
         </div>
       )}
     </div>

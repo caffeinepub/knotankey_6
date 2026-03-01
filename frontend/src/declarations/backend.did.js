@@ -73,9 +73,10 @@ export const ReturnRequest = IDL.Record({
   'orderId' : IDL.Text,
   'reason' : IDL.Text,
 });
-export const NewsletterSubscriber = IDL.Record({
-  'subscribedAt' : Time,
+export const WishlistItem = IDL.Record({
+  'productId' : IDL.Text,
   'email' : IDL.Text,
+  'addedAt' : Time,
 });
 
 export const idlService = IDL.Service({
@@ -105,11 +106,14 @@ export const idlService = IDL.Service({
       [],
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+  'addToWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'createCustomOrderRequest' : IDL.Func([CustomOrderRequest], [], []),
   'createOrder' : IDL.Func([Order], [IDL.Text], []),
   'createProduct' : IDL.Func([IDL.Text, Product], [], []),
   'createReturnRequest' : IDL.Func([ReturnRequest], [], []),
   'deleteProduct' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'filterProductsByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], []),
+  'getBestSellers' : IDL.Func([], [IDL.Vec(Product)], []),
   'getCustomOrderRequests' : IDL.Func(
       [IDL.Text],
       [IDL.Vec(CustomOrderRequest)],
@@ -120,9 +124,8 @@ export const idlService = IDL.Service({
   'getProductById' : IDL.Func([IDL.Text], [Product], []),
   'getProducts' : IDL.Func([], [IDL.Vec(Product)], []),
   'getReturnRequests' : IDL.Func([IDL.Text], [IDL.Vec(ReturnRequest)], []),
-  'getSubscribers' : IDL.Func([IDL.Text], [IDL.Vec(NewsletterSubscriber)], []),
-  'removeSubscriber' : IDL.Func([IDL.Text, IDL.Text], [], []),
-  'subscribeToNewsletter' : IDL.Func([IDL.Text], [], []),
+  'getWishlist' : IDL.Func([IDL.Text], [IDL.Vec(WishlistItem)], []),
+  'removeFromWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'updateProduct' : IDL.Func([IDL.Text, Product], [], []),
 });
@@ -195,9 +198,10 @@ export const idlFactory = ({ IDL }) => {
     'orderId' : IDL.Text,
     'reason' : IDL.Text,
   });
-  const NewsletterSubscriber = IDL.Record({
-    'subscribedAt' : Time,
+  const WishlistItem = IDL.Record({
+    'productId' : IDL.Text,
     'email' : IDL.Text,
+    'addedAt' : Time,
   });
   
   return IDL.Service({
@@ -227,11 +231,14 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+    'addToWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'createCustomOrderRequest' : IDL.Func([CustomOrderRequest], [], []),
     'createOrder' : IDL.Func([Order], [IDL.Text], []),
     'createProduct' : IDL.Func([IDL.Text, Product], [], []),
     'createReturnRequest' : IDL.Func([ReturnRequest], [], []),
     'deleteProduct' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'filterProductsByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], []),
+    'getBestSellers' : IDL.Func([], [IDL.Vec(Product)], []),
     'getCustomOrderRequests' : IDL.Func(
         [IDL.Text],
         [IDL.Vec(CustomOrderRequest)],
@@ -242,13 +249,8 @@ export const idlFactory = ({ IDL }) => {
     'getProductById' : IDL.Func([IDL.Text], [Product], []),
     'getProducts' : IDL.Func([], [IDL.Vec(Product)], []),
     'getReturnRequests' : IDL.Func([IDL.Text], [IDL.Vec(ReturnRequest)], []),
-    'getSubscribers' : IDL.Func(
-        [IDL.Text],
-        [IDL.Vec(NewsletterSubscriber)],
-        [],
-      ),
-    'removeSubscriber' : IDL.Func([IDL.Text, IDL.Text], [], []),
-    'subscribeToNewsletter' : IDL.Func([IDL.Text], [], []),
+    'getWishlist' : IDL.Func([IDL.Text], [IDL.Vec(WishlistItem)], []),
+    'removeFromWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'updateProduct' : IDL.Func([IDL.Text, Product], [], []),
   });

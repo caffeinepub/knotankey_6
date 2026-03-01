@@ -1,31 +1,64 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from '@tanstack/react-router';
-import { useGetProductById } from '../hooks/useQueries';
-import { useCart } from '../context/CartContext';
-import QuantitySelector from '../components/product-detail/QuantitySelector';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ShoppingBag, Zap, ArrowLeft, Star } from 'lucide-react';
-import { toast } from 'sonner';
-import { formatINR } from '../utils/currency';
+import { useState } from "react";
+import { useParams, useNavigate } from "@tanstack/react-router";
+import { useGetProductById } from "@/hooks/useQueries";
+import { useCart } from "@/context/CartContext";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { formatINR } from "@/utils/currency";
+import { ShoppingCart, Zap, Plus, Minus, ArrowLeft, Star } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ProductDetailPage() {
-  const { id } = useParams({ from: '/products/$id' });
+  const { id } = useParams({ from: "/products/$id" });
   const navigate = useNavigate();
-  const { data: product, isLoading, error } = useGetProductById(id);
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const [adding, setAdding] = useState(false);
+
+  const { data: product, isLoading, isError } = useGetProductById(id);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    addToCart(
+      {
+        productId: product.id,
+        title: product.title,
+        price: Number(product.price),
+        imageUrl: product.image.getDirectURL(),
+      },
+      quantity
+    );
+    toast.success(`${product.title} added to cart!`);
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+    addToCart(
+      {
+        productId: product.id,
+        title: product.title,
+        price: Number(product.price),
+        imageUrl: product.image.getDirectURL(),
+      },
+      quantity
+    );
+    navigate({ to: "/checkout" });
+  };
 
   if (isLoading) {
     return (
-      <div className="pt-20 min-h-screen">
-        <div className="max-w-6xl mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <Skeleton className="aspect-square rounded-3xl" />
+      <div className="min-h-screen bg-background pt-24 pb-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Skeleton className="h-6 w-32 mb-8" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <Skeleton className="h-[500px] w-full rounded-2xl" />
             <div className="space-y-4">
               <Skeleton className="h-8 w-3/4" />
               <Skeleton className="h-6 w-1/4" />
-              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-12 w-full mt-6" />
               <Skeleton className="h-12 w-full" />
             </div>
           </div>
@@ -34,118 +67,131 @@ export default function ProductDetailPage() {
     );
   }
 
-  if (error || !product) {
+  if (isError || !product) {
     return (
-      <div className="pt-20 min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-background pt-24 pb-16 flex items-center justify-center">
         <div className="text-center">
-          <p className="font-serif text-2xl text-warm-brown mb-4">Product not found</p>
-          <button
-            onClick={() => navigate({ to: '/products' })}
-            className="font-sans text-sm text-warm-tan hover:text-warm-brown underline"
-          >
-            Back to products
-          </button>
+          <h2 className="text-2xl font-bold text-foreground mb-3">
+            Product Not Found
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            The product you're looking for doesn't exist or has been removed.
+          </p>
+          <Button onClick={() => navigate({ to: "/products" })}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Products
+          </Button>
         </div>
       </div>
     );
   }
 
-  const price = Number(product.price) / 100;
   const imageUrl = product.image.getDirectURL();
 
-  const handleAddToCart = () => {
-    setAdding(true);
-    addToCart({ productId: product.id, title: product.title, price, imageUrl }, quantity);
-    toast.success(`${product.title} added to cart 🧶`);
-    setTimeout(() => setAdding(false), 600);
-  };
-
-  const handleBuyNow = () => {
-    addToCart({ productId: product.id, title: product.title, price, imageUrl }, quantity);
-    navigate({ to: '/checkout' });
-  };
-
   return (
-    <div className="pt-20 min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Back */}
+    <div className="min-h-screen bg-background pt-24 pb-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumb */}
         <button
-          onClick={() => navigate({ to: '/products' })}
-          className="flex items-center gap-2 font-sans text-sm text-warm-tan hover:text-warm-brown transition-colors mb-8"
+          onClick={() => navigate({ to: "/products" })}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Products
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
-          {/* Image */}
-          <div className="img-zoom-container rounded-3xl overflow-hidden shadow-soft-lg bg-cream-200 aspect-square">
-            <img
-              src={imageUrl}
-              alt={product.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          {/* Info */}
-          <div className="flex flex-col justify-center animate-fade-up">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Product Image */}
+          <div className="relative">
+            <div className="aspect-square rounded-2xl overflow-hidden bg-secondary/20">
+              <img
+                src={imageUrl}
+                alt={product.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
             {product.bestseller && (
-              <div className="flex items-center gap-1 mb-3">
-                <Star className="w-4 h-4 text-warm-brown fill-warm-brown" />
-                <span className="font-sans text-xs tracking-wider uppercase text-warm-brown">Bestseller</span>
+              <div className="absolute top-4 left-4">
+                <Badge className="bg-primary text-primary-foreground gap-1">
+                  <Star className="w-3 h-3 fill-current" />
+                  Best Seller
+                </Badge>
               </div>
             )}
+          </div>
 
-            <p className="font-sans text-xs tracking-[0.3em] uppercase text-warm-tan mb-2">
+          {/* Product Info */}
+          <div className="flex flex-col">
+            <Badge
+              variant="outline"
+              className="w-fit mb-3 text-xs uppercase tracking-wider"
+            >
               {product.category}
-            </p>
-            <h1 className="font-serif text-4xl md:text-5xl text-warm-brown mb-4 leading-tight">
+            </Badge>
+
+            <h1 className="text-3xl font-bold text-foreground font-serif mb-3">
               {product.title}
             </h1>
-            <p className="font-serif text-3xl text-warm-brown mb-6">
-              {formatINR(price)}
+
+            <p className="text-3xl font-bold text-primary mb-6">
+              {formatINR(Number(product.price))}
             </p>
 
-            <div className="w-12 h-px bg-cream-300 mb-6" />
-
-            <p className="font-sans text-warm-tan leading-relaxed mb-8">
+            <p className="text-muted-foreground leading-relaxed mb-8">
               {product.description}
             </p>
 
-            {/* Quantity */}
-            <div className="mb-6">
-              <p className="font-sans text-xs tracking-wider uppercase text-warm-tan mb-3">Quantity</p>
-              <QuantitySelector value={quantity} onChange={setQuantity} />
+            {/* Quantity Selector */}
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-sm font-medium text-foreground">
+                Quantity
+              </span>
+              <div className="flex items-center border border-border rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-3 py-2 hover:bg-secondary transition-colors"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="px-4 py-2 font-medium min-w-[3rem] text-center">
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="px-3 py-2 hover:bg-secondary transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            {/* Buttons */}
+            {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <button
+              <Button
+                size="lg"
+                variant="outline"
                 onClick={handleAddToCart}
-                disabled={adding}
-                className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-full bg-warm-brown text-cream-50 font-sans text-sm tracking-wider uppercase btn-luxury transition-all duration-300 ${
-                  adding ? 'opacity-70 scale-95' : 'hover:bg-warm-tan'
-                }`}
+                className="flex-1 gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
               >
-                <ShoppingBag className="w-4 h-4" />
-                {adding ? 'Added!' : 'Add to Cart'}
-              </button>
-              <button
-                onClick={handleBuyNow}
-                className="flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-full border-2 border-warm-brown text-warm-brown font-sans text-sm tracking-wider uppercase btn-luxury hover:bg-warm-brown hover:text-cream-50 transition-all duration-300"
-              >
-                <Zap className="w-4 h-4" />
+                <ShoppingCart className="w-5 h-5" />
+                Add to Cart
+              </Button>
+              <Button size="lg" onClick={handleBuyNow} className="flex-1 gap-2">
+                <Zap className="w-5 h-5" />
                 Buy Now
-              </button>
+              </Button>
             </div>
 
-            {/* Trust badges */}
-            <div className="mt-8 pt-6 border-t border-cream-300 grid grid-cols-3 gap-4 text-center">
-              {['Handmade', 'Premium Quality', 'Free Returns'].map(badge => (
-                <div key={badge}>
-                  <p className="font-sans text-xs text-warm-tan">{badge}</p>
-                </div>
-              ))}
+            {/* Handmade Notice */}
+            <div className="mt-8 p-4 bg-secondary/30 rounded-xl border border-border">
+              <p className="text-sm text-muted-foreground">
+                🧶{" "}
+                <strong className="text-foreground">
+                  Handcrafted with love.
+                </strong>{" "}
+                Each piece is made to order and may have slight variations —
+                that's what makes it uniquely yours.
+              </p>
             </div>
           </div>
         </div>

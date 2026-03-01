@@ -71,38 +71,35 @@ actor {
     createdAt : Time.Time;
   };
 
-  public type NewsletterSubscriber = {
+  public type WishlistItem = {
     email : Text;
-    subscribedAt : Time.Time;
+    productId : Text;
+    addedAt : Time.Time;
   };
 
-  let products = Map.empty<Text, Product>();
-  let orders = Map.empty<Text, Order>();
-  let customOrderRequests = Map.empty<Text, CustomOrderRequest>();
-  let returnRequests = Map.empty<Text, ReturnRequest>();
-  let newsletterSubscribers = Map.empty<Text, NewsletterSubscriber>();
+  // Persisted stable state
+  var products = Map.empty<Text, Product>();
+  var orders = Map.empty<Text, Order>();
+  var customOrderRequests = Map.empty<Text, CustomOrderRequest>();
+  var returnRequests = Map.empty<Text, ReturnRequest>();
+  var wishlist = Map.empty<Text, List.List<WishlistItem>>();
 
+  // Admin Passcode
   let adminPasscode = "knotankey_admin_2026";
 
-  // Products
+  // Product CRUD Operations
   public shared ({ caller }) func createProduct(passcode : Text, product : Product) : async () {
-    if (passcode != adminPasscode) {
-      Runtime.trap("Unauthorized");
-    };
+    requireAdmin(passcode);
     products.add(product.id, product);
   };
 
   public shared ({ caller }) func updateProduct(passcode : Text, product : Product) : async () {
-    if (passcode != adminPasscode) {
-      Runtime.trap("Unauthorized");
-    };
+    requireAdmin(passcode);
     products.add(product.id, product);
   };
 
   public shared ({ caller }) func deleteProduct(passcode : Text, productId : Text) : async () {
-    if (passcode != adminPasscode) {
-      Runtime.trap("Unauthorized");
-    };
+    requireAdmin(passcode);
     products.remove(productId);
   };
 
@@ -117,6 +114,24 @@ actor {
     };
   };
 
+  public shared ({ caller }) func filterProductsByCategory(category : Text) : async [Product] {
+    let filtered = products.values().toArray().filter(
+      func(product) {
+        Text.equal(product.category, category);
+      }
+    );
+    filtered;
+  };
+
+  public shared ({ caller }) func getBestSellers() : async [Product] {
+    let filtered = products.values().toArray().filter(
+      func(product) {
+        product.bestseller;
+      }
+    );
+    filtered;
+  };
+
   // Orders
   public shared ({ caller }) func createOrder(order : Order) : async Text {
     orders.add(order.id, order);
@@ -124,9 +139,7 @@ actor {
   };
 
   public shared ({ caller }) func updateOrderStatus(passcode : Text, orderId : Text, status : Text) : async () {
-    if (passcode != adminPasscode) {
-      Runtime.trap("Unauthorized");
-    };
+    requireAdmin(passcode);
     switch (orders.get(orderId)) {
       case (null) { Runtime.trap("Order not found") };
       case (?order) {
@@ -137,9 +150,7 @@ actor {
   };
 
   public shared ({ caller }) func getOrders(passcode : Text) : async [Order] {
-    if (passcode != adminPasscode) {
-      Runtime.trap("Unauthorized");
-    };
+    requireAdmin(passcode);
     orders.values().toArray();
   };
 
@@ -156,9 +167,7 @@ actor {
   };
 
   public shared ({ caller }) func getCustomOrderRequests(passcode : Text) : async [CustomOrderRequest] {
-    if (passcode != adminPasscode) {
-      Runtime.trap("Unauthorized");
-    };
+    requireAdmin(passcode);
     customOrderRequests.values().toArray();
   };
 
@@ -168,32 +177,50 @@ actor {
   };
 
   public shared ({ caller }) func getReturnRequests(passcode : Text) : async [ReturnRequest] {
-    if (passcode != adminPasscode) {
-      Runtime.trap("Unauthorized");
-    };
+    requireAdmin(passcode);
     returnRequests.values().toArray();
   };
 
-  // Newsletter
-  public shared ({ caller }) func subscribeToNewsletter(email : Text) : async () {
-    let subscriber : NewsletterSubscriber = {
+  // Wishlist
+  public shared ({ caller }) func addToWishlist(email : Text, productId : Text) : async () {
+    let wishlistItem : WishlistItem = {
       email;
-      subscribedAt = Time.now();
+      productId;
+      addedAt = Time.now();
     };
-    newsletterSubscribers.add(email, subscriber);
+    let currentWishlist = switch (wishlist.get(email)) {
+      case (null) { List.empty<WishlistItem>() };
+      case (?items) { items };
+    };
+    currentWishlist.add(wishlistItem);
+    wishlist.add(email, currentWishlist);
   };
 
-  public shared ({ caller }) func getSubscribers(passcode : Text) : async [NewsletterSubscriber] {
+  public shared ({ caller }) func getWishlist(email : Text) : async [WishlistItem] {
+    switch (wishlist.get(email)) {
+      case (null) { [] };
+      case (?items) { items.toArray() };
+    };
+  };
+
+  public shared ({ caller }) func removeFromWishlist(email : Text, productId : Text) : async () {
+    switch (wishlist.get(email)) {
+      case (null) { Runtime.trap("Wishlist not found") };
+      case (?items) {
+        let updatedItems = items.filter(
+          func(item) {
+            not Text.equal(item.productId, productId);
+          }
+        );
+        wishlist.add(email, updatedItems);
+      };
+    };
+  };
+
+  // Helper to check admin access
+  func requireAdmin(passcode : Text) {
     if (passcode != adminPasscode) {
       Runtime.trap("Unauthorized");
     };
-    newsletterSubscribers.values().toArray();
-  };
-
-  public shared ({ caller }) func removeSubscriber(passcode : Text, email : Text) : async () {
-    if (passcode != adminPasscode) {
-      Runtime.trap("Unauthorized");
-    };
-    newsletterSubscribers.remove(email);
   };
 };

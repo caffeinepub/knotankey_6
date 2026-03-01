@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useRouter } from '@tanstack/react-router';
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import MusicToggle from './MusicToggle';
 
 interface NavbarProps {
   onCartClick: () => void;
@@ -80,8 +79,6 @@ export default function Navbar({ onCartClick }: NavbarProps) {
 
           {/* Right icons */}
           <div className="flex items-center gap-3 shrink-0">
-            <MusicToggle />
-
             <button
               onClick={onCartClick}
               className="relative p-2 text-warm-tan hover:text-warm-brown transition-colors duration-300"

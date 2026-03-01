@@ -31,10 +31,6 @@ export interface CustomerInfo {
   'phone' : string,
 }
 export type ExternalBlob = Uint8Array;
-export interface NewsletterSubscriber {
-  'subscribedAt' : Time,
-  'email' : string,
-}
 export interface Order {
   'id' : string,
   'customerInfo' : CustomerInfo,
@@ -68,6 +64,11 @@ export interface ReturnRequest {
   'reason' : string,
 }
 export type Time = bigint;
+export interface WishlistItem {
+  'productId' : string,
+  'email' : string,
+  'addedAt' : Time,
+}
 export interface _CaffeineStorageCreateCertificateResult {
   'method' : string,
   'blob_hash' : string,
@@ -95,20 +96,22 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
+  'addToWishlist' : ActorMethod<[string, string], undefined>,
   'createCustomOrderRequest' : ActorMethod<[CustomOrderRequest], undefined>,
   'createOrder' : ActorMethod<[Order], string>,
   'createProduct' : ActorMethod<[string, Product], undefined>,
   'createReturnRequest' : ActorMethod<[ReturnRequest], undefined>,
   'deleteProduct' : ActorMethod<[string, string], undefined>,
+  'filterProductsByCategory' : ActorMethod<[string], Array<Product>>,
+  'getBestSellers' : ActorMethod<[], Array<Product>>,
   'getCustomOrderRequests' : ActorMethod<[string], Array<CustomOrderRequest>>,
   'getOrderById' : ActorMethod<[string], Order>,
   'getOrders' : ActorMethod<[string], Array<Order>>,
   'getProductById' : ActorMethod<[string], Product>,
   'getProducts' : ActorMethod<[], Array<Product>>,
   'getReturnRequests' : ActorMethod<[string], Array<ReturnRequest>>,
-  'getSubscribers' : ActorMethod<[string], Array<NewsletterSubscriber>>,
-  'removeSubscriber' : ActorMethod<[string, string], undefined>,
-  'subscribeToNewsletter' : ActorMethod<[string], undefined>,
+  'getWishlist' : ActorMethod<[string], Array<WishlistItem>>,
+  'removeFromWishlist' : ActorMethod<[string, string], undefined>,
   'updateOrderStatus' : ActorMethod<[string, string, string], undefined>,
   'updateProduct' : ActorMethod<[string, Product], undefined>,
 }

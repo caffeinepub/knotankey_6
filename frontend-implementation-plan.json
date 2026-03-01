@@ -1,43 +1,21 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add Payment via Email messaging to Checkout and Thank You pages",
+  "title": "Remove SVG icon from header button",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add a 'Secure Payment Process' notice box on CheckoutPage between Order Total and Place Order button",
+      "summary": "Remove the SVG icon element from the first button in the Navbar component's header top-left area while keeping the button itself intact",
       "acceptanceCriteria": [
-        "Notice box appears between the Order Total and Place Order button on the checkout page",
-        "Background color is #F8F5F0",
-        "Box has rounded corners",
-        "A small lock icon is visible on the left side of the notice",
-        "Title reads 'Secure Payment Process'",
-        "Body text reads 'After placing your order, we will send a secure payment link to your email. Payment will be completed securely through that link to confirm your order.'",
-        "Adequate vertical margin ensures the box does not appear cramped",
-        "Styling is consistent with the knotankey soft luxury aesthetic"
+        "The SVG icon previously inside the header button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[1]/div[1]/button[1]/span[1]/svg[1] is no longer rendered",
+        "No broken layout or empty space is introduced where the SVG was",
+        "The rest of the Navbar remains visually and functionally unchanged"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/CheckoutPage.tsx",
+          "path": "frontend/src/components/layout/Navbar.tsx",
           "operation": "modify",
-          "description": "Insert a payment notice box component between the OrderSummary total display and the Place Order button. The notice box will have a background color of #F8F5F0, rounded corners (rounded-lg), comfortable vertical margins (my-6), padding (p-4 or p-6), display a small lock icon on the left (using lucide-react Lock icon), a bold title 'Secure Payment Process', and body text explaining the payment-via-email flow. Use flexbox or grid layout to position the icon and text. Ensure all typography matches the existing soft luxury aesthetic using the configured fonts (Playfair Display for headings, DM Sans for body)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Add payment instructions message block on ThankYouPage below the order confirmation message",
-      "acceptanceCriteria": [
-        "Payment instructions block appears below the main confirmation message on the ThankYouPage",
-        "Text includes 'Your order has been received. We will review your order and send a secure payment link to your email shortly to complete the purchase.'",
-        "Text includes 'Please complete the payment through that link to confirm your order.'",
-        "Styling is consistent with the knotankey soft luxury aesthetic and the checkout page notice box"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/ThankYouPage.tsx",
-          "operation": "modify",
-          "description": "Add a payment instructions message block below the existing order confirmation message. The block should use similar styling to the checkout notice box (background #F8F5F0, rounded corners, comfortable padding and margins) and display the full payment instructions text: 'Your order has been received. We will review your order and send a secure payment link to your email shortly to complete the purchase. Please complete the payment through that link to confirm your order.' Maintain consistency with the soft luxury knotankey aesthetic using the configured typography and spacing."
+          "description": "Locate the first button element in the header's top-left area and remove its inner SVG icon element. If the SVG is wrapped in a span element that becomes empty after removal, remove that span as well. Preserve the button element itself and all its attributes, event handlers, and styling. Ensure no broken layout or empty space remains where the SVG was located."
         }
       ]
     }

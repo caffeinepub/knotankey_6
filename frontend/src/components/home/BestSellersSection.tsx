@@ -1,68 +1,73 @@
-import { useRef } from 'react';
-import { Link } from '@tanstack/react-router';
-import { useGetProducts } from '../../hooks/useQueries';
-import ProductCard from '../ProductCard';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
+import { useNavigate } from "@tanstack/react-router";
+import { useGetBestSellers } from "@/hooks/useQueries";
+import ProductCard from "@/components/ProductCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function BestSellersSection() {
-  const { data: products, isLoading } = useGetProducts();
-  const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
-
-  const bestsellers = products?.filter(p => p.bestseller).slice(0, 4) ?? [];
+  const navigate = useNavigate();
+  const { data: products, isLoading, isError } = useGetBestSellers();
 
   return (
-    <section
-      ref={sectionRef}
-      className={`py-20 px-4 max-w-7xl mx-auto transition-all duration-700 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-      }`}
-    >
-      <div className="text-center mb-12">
-        <p className="font-sans text-xs tracking-[0.3em] uppercase text-warm-tan mb-3">Our Favourites</p>
-        <h2 className="font-serif text-4xl md:text-5xl text-warm-brown">Best Sellers</h2>
-        <div className="w-16 h-px bg-warm-tan mx-auto mt-4" />
-      </div>
+    <section className="py-20 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-14">
+          <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
+            Customer Favourites
+          </p>
+          <h2 className="text-4xl font-bold text-foreground font-serif mb-4">
+            Best Sellers
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Our most-loved handcrafted pieces, chosen by customers who appreciate
+            the art of crochet.
+          </p>
+        </div>
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="rounded-3xl overflow-hidden">
-              <Skeleton className="aspect-square w-full" />
-              <div className="p-5 space-y-2">
-                <Skeleton className="h-5 w-3/4" />
+        {isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="h-64 w-full rounded-xl" />
+                <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-10 w-full" />
               </div>
-            </div>
-          ))}
-        </div>
-      ) : bestsellers.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {bestsellers.map((product, i) => (
-            <div
-              key={product.id}
-              className="animate-fade-up"
-              style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'both' }}
-            >
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="font-sans text-warm-tan">Products coming soon…</p>
-        </div>
-      )}
+            ))}
+          </div>
+        )}
 
-      <div className="text-center mt-12">
-        <Link
-          to="/products"
-          className="inline-block border border-warm-brown text-warm-brown font-sans text-sm tracking-[0.2em] uppercase px-8 py-3 rounded-full hover:bg-warm-brown hover:text-cream-50 transition-all duration-300 btn-luxury"
-        >
-          View All Products
-        </Link>
+        {isError && (
+          <div className="text-center py-12 text-muted-foreground">
+            <p>Unable to load best sellers. Please try again later.</p>
+          </div>
+        )}
+
+        {!isLoading && !isError && products && products.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground">
+            <p>No best sellers available yet. Check back soon!</p>
+          </div>
+        )}
+
+        {!isLoading && !isError && products && products.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+
+        <div className="text-center mt-12">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => navigate({ to: "/products" })}
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground gap-2"
+          >
+            View All Products
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
     </section>
   );

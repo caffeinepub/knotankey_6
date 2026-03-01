@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-on-the-checkoutpage-add-a-secure-payment-process-notice-box-positioned-between-the-order-total-display-and-the-place-order-button-the-box-must-have-a-background-color-of-f8f5f0-very-light-beige-rounded-corners-a-small-lock-icon-on-the-left-and-comfortable-vertical-margin-above-and-below-the-title-text-should-read-secure-payment-process-and-the-body-should-read-after-placing-your-order-we-will-send-a-secure-payment-link-to-your-email-payment-will-be-completed-securely-through-that-link-to-confirm-your-order-all-typography-and-styling-must-match-the-existing-knotankey-soft-luxury-aesthetic",
-      "featureTitle": "On the CheckoutPage, add a 'Secure Payment Process' notice box positioned between the Order Total display and the Place Order button. The box must have a background color of #F8F5F0 (very light beige), rounded corners, a small lock icon on the left, and comfortable vertical margin above and below. The title text should read 'Secure Payment Process' and the body should read: 'After placing your order, we will send a secure payment link to your email. Payment will be completed securely through that link to confirm your order.' All typography and styling must match the existing knotankey soft luxury aesthetic.",
+      "featureId": "feature-in-the-navbar-component-remove-the-svg-icon-element-inside-the-first-button-in-the-header-s-top-left-area-the-button-element-itself-should-remain-but-the-inner-svg-and-its-wrapping-span-if-it-becomes-empty-should-be-completely-removed",
+      "featureTitle": "In the Navbar component, remove the SVG icon element inside the first button in the header's top-left area. The button element itself should remain, but the inner <svg> (and its wrapping <span> if it becomes empty) should be completely removed.",
       "files": [
-        "frontend/src/pages/CheckoutPage.tsx"
+        "frontend/src/components/layout/Navbar.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -17,25 +17,6 @@
       ],
       "testIds": [
         "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-on-the-thankyoupage-order-confirmation-page-add-a-payment-instructions-message-block-displayed-below-the-existing-order-confirmation-message-the-message-should-read-your-order-has-been-received-we-will-review-your-order-and-send-a-secure-payment-link-to-your-email-shortly-to-complete-the-purchase-please-complete-the-payment-through-that-link-to-confirm-your-order-style-this-message-to-match-the-soft-luxury-knotankey-aesthetic-consistent-with-the-notice-box-added-on-the-checkout-page",
-      "featureTitle": "On the ThankYouPage (order confirmation page), add a payment instructions message block displayed below the existing order confirmation message. The message should read: 'Your order has been received. We will review your order and send a secure payment link to your email shortly to complete the purchase. Please complete the payment through that link to confirm your order.' Style this message to match the soft luxury knotankey aesthetic, consistent with the notice box added on the checkout page.",
-      "files": [
-        "frontend/src/pages/ThankYouPage.tsx"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
       ],
       "confidence": "high"
     }
