@@ -8,6 +8,8 @@ import Array "mo:core/Array";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 
+
+
 actor {
   include MixinStorage();
 
@@ -69,11 +71,16 @@ actor {
     createdAt : Time.Time;
   };
 
+  public type NewsletterSubscriber = {
+    email : Text;
+    subscribedAt : Time.Time;
+  };
+
   let products = Map.empty<Text, Product>();
   let orders = Map.empty<Text, Order>();
   let customOrderRequests = Map.empty<Text, CustomOrderRequest>();
   let returnRequests = Map.empty<Text, ReturnRequest>();
-  let newsletterSubscribers = List.empty<Text>();
+  let newsletterSubscribers = Map.empty<Text, NewsletterSubscriber>();
 
   let adminPasscode = "knotankey_admin_2026";
 
@@ -169,16 +176,24 @@ actor {
 
   // Newsletter
   public shared ({ caller }) func subscribeToNewsletter(email : Text) : async () {
-    let alreadyExists = newsletterSubscribers.filter(func(existingEmail) { existingEmail == email }).isEmpty();
-    if (alreadyExists) {
-      newsletterSubscribers.add(email);
+    let subscriber : NewsletterSubscriber = {
+      email;
+      subscribedAt = Time.now();
     };
+    newsletterSubscribers.add(email, subscriber);
   };
 
-  public shared ({ caller }) func getSubscribers(passcode : Text) : async [Text] {
+  public shared ({ caller }) func getSubscribers(passcode : Text) : async [NewsletterSubscriber] {
     if (passcode != adminPasscode) {
       Runtime.trap("Unauthorized");
     };
-    newsletterSubscribers.toArray();
+    newsletterSubscribers.values().toArray();
+  };
+
+  public shared ({ caller }) func removeSubscriber(passcode : Text, email : Text) : async () {
+    if (passcode != adminPasscode) {
+      Runtime.trap("Unauthorized");
+    };
+    newsletterSubscribers.remove(email);
   };
 };

@@ -89,6 +89,10 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface NewsletterSubscriber {
+    subscribedAt: Time;
+    email: string;
+}
 export interface CustomerInfo {
     country: string;
     city: string;
@@ -171,7 +175,8 @@ export interface backendInterface {
     getProductById(productId: string): Promise<Product>;
     getProducts(): Promise<Array<Product>>;
     getReturnRequests(passcode: string): Promise<Array<ReturnRequest>>;
-    getSubscribers(passcode: string): Promise<Array<string>>;
+    getSubscribers(passcode: string): Promise<Array<NewsletterSubscriber>>;
+    removeSubscriber(passcode: string, email: string): Promise<void>;
     subscribeToNewsletter(email: string): Promise<void>;
     updateOrderStatus(passcode: string, orderId: string, status: string): Promise<void>;
     updateProduct(passcode: string, product: Product): Promise<void>;
@@ -417,7 +422,7 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async getSubscribers(arg0: string): Promise<Array<string>> {
+    async getSubscribers(arg0: string): Promise<Array<NewsletterSubscriber>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getSubscribers(arg0);
@@ -428,6 +433,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getSubscribers(arg0);
+            return result;
+        }
+    }
+    async removeSubscriber(arg0: string, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.removeSubscriber(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.removeSubscriber(arg0, arg1);
             return result;
         }
     }

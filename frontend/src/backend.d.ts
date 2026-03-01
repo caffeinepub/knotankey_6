@@ -14,6 +14,10 @@ export class ExternalBlob {
     static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
     withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
 }
+export interface NewsletterSubscriber {
+    subscribedAt: Time;
+    email: string;
+}
 export interface CustomerInfo {
     country: string;
     city: string;
@@ -79,7 +83,8 @@ export interface backendInterface {
     getProductById(productId: string): Promise<Product>;
     getProducts(): Promise<Array<Product>>;
     getReturnRequests(passcode: string): Promise<Array<ReturnRequest>>;
-    getSubscribers(passcode: string): Promise<Array<string>>;
+    getSubscribers(passcode: string): Promise<Array<NewsletterSubscriber>>;
+    removeSubscriber(passcode: string, email: string): Promise<void>;
     subscribeToNewsletter(email: string): Promise<void>;
     updateOrderStatus(passcode: string, orderId: string, status: string): Promise<void>;
     updateProduct(passcode: string, product: Product): Promise<void>;

@@ -6,6 +6,7 @@ import QuantitySelector from '../components/product-detail/QuantitySelector';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ShoppingBag, Zap, ArrowLeft, Star } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatINR } from '../utils/currency';
 
 export default function ProductDetailPage() {
   const { id } = useParams({ from: '/products/$id' });
@@ -102,7 +103,7 @@ export default function ProductDetailPage() {
               {product.title}
             </h1>
             <p className="font-serif text-3xl text-warm-brown mb-6">
-              ${price.toFixed(2)}
+              {formatINR(price)}
             </p>
 
             <div className="w-12 h-px bg-cream-300 mb-6" />

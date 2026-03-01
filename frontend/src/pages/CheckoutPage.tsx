@@ -6,7 +6,7 @@ import OrderSummary from '../components/checkout/OrderSummary';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Loader2, CreditCard } from 'lucide-react';
+import { Loader2, CreditCard, Lock } from 'lucide-react';
 import type { Order, OrderItem } from '../backend';
 
 interface FormData {
@@ -76,13 +76,6 @@ export default function CheckoutPage() {
       createdAt: BigInt(Date.now()) * BigInt(1_000_000),
     };
 
-    /* STRIPE INTEGRATION POINT:
-     * Replace the mocked payment logic below with Stripe Elements and payment intent creation.
-     * 1. Create a PaymentIntent on your backend with the order total
-     * 2. Use Stripe Elements to collect card details
-     * 3. Confirm the payment with stripe.confirmCardPayment()
-     * 4. Only call createOrder() after successful payment confirmation
-     */
     createOrder(order, {
       onSuccess: (orderId) => {
         clearCart();
@@ -147,13 +140,12 @@ export default function CheckoutPage() {
                 {/* Payment section */}
                 <div className="mt-8 pt-6 border-t border-cream-300">
                   <h2 className="font-serif text-2xl text-warm-brown mb-4">Payment</h2>
-                  {/* STRIPE INTEGRATION POINT: Add Stripe Elements here */}
                   <div className="bg-cream-200 rounded-2xl p-5 border border-cream-300 flex items-center gap-3">
                     <CreditCard className="w-5 h-5 text-warm-tan" />
                     <div>
                       <p className="font-sans text-sm text-warm-brown font-medium">Secure Payment</p>
                       <p className="font-sans text-xs text-warm-tan">
-                        Test mode — no real payment will be processed
+                        Payment link will be sent to your email after order placement
                       </p>
                     </div>
                   </div>
@@ -165,6 +157,26 @@ export default function CheckoutPage() {
             <div className="lg:col-span-2">
               <div className="sticky top-24 space-y-4">
                 <OrderSummary />
+
+                {/* Secure Payment Notice */}
+                <div
+                  className="rounded-2xl border border-[#E8DDD0] px-5 py-4 flex items-start gap-3"
+                  style={{ backgroundColor: '#F8F5F0' }}
+                >
+                  <div className="mt-0.5 shrink-0">
+                    <Lock className="w-4 h-4 text-warm-brown" />
+                  </div>
+                  <div className="text-center flex-1">
+                    <p className="font-serif text-sm text-warm-brown font-semibold mb-1">
+                      Secure Payment Process
+                    </p>
+                    <p className="font-sans text-xs text-warm-tan leading-relaxed">
+                      After placing your order, we will send a secure payment link to your email.
+                      Payment will be completed securely through that link to confirm your order.
+                    </p>
+                  </div>
+                </div>
+
                 <button
                   type="submit"
                   disabled={isPending || items.length === 0}

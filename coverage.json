@@ -1,377 +1,46 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T18:43:50.861Z",
+  "generatedAt": "2026-03-01T18:03:40.808Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 15,
-    "implemented": 13,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Set up the Motoko backend with a single actor that stores: products (productId, title, description, price, image URL, category, bestseller flag, createdAt), orders (orderId, customerInfo, items, total, status, createdAt), custom order requests (requestId, productType, colorPreference, size, description, inspirationImageBase64, budgetRange, email, createdAt), return requests (requestId, orderId, email, reason, description, createdAt), and newsletter subscribers (email). Seed the backend with 8 sample products on first deploy.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-10",
-        "summary": "Build the Custom Order page (/custom-order) with the heading 'Design Your Own Crochet Piece'. Include a form with: Product type selector (bag, blanket, sweater, decor), Color preference text input, Size input, Description textarea, Inspiration image file upload (convert to base64 and store), Budget range selector, Email input. Submit button labeled 'Request Custom Piece'. On submit, send the form data including the base64 image to the backend and show a success confirmation.",
+        "summary": "On the CheckoutPage, add a 'Secure Payment Process' notice box positioned between the Order Total display and the Place Order button. The box must have a background color of #F8F5F0 (very light beige), rounded corners, a small lock icon on the left, and comfortable vertical margin above and below. The title text should read 'Secure Payment Process' and the body should read: 'After placing your order, we will send a secure payment link to your email. Payment will be completed securely through that link to confirm your order.' All typography and styling must match the existing knotankey soft luxury aesthetic.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/CustomOrderPage.tsx",
-          "frontend/src/components/custom-order/CustomOrderForm.tsx",
-          "frontend/src/components/custom-order/ImageUpload.tsx",
-          "frontend/src/hooks/useCustomOrderSubmit.ts"
+          "frontend/src/pages/CheckoutPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/CustomOrderPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-11",
-        "summary": "Build the Returns page (/returns) with: policy section explaining 7-day return policy, unused handmade items only, custom orders non-refundable, and a contact email. Below the policy, include a return request form with fields: Order ID, Email, Reason (dropdown), Description (textarea). Submitting the form saves the return request to the backend and shows a confirmation message.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/ReturnsPage.tsx",
-          "frontend/src/components/returns/ReturnPolicy.tsx",
-          "frontend/src/components/returns/ReturnRequestForm.tsx",
-          "frontend/src/hooks/useReturnSubmit.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/ReturnsPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-12",
-        "summary": "Build the Admin Panel (/admin) as a protected route. Show a passcode entry screen first; only proceed if the user enters 'knotankey_admin_2026'. Once authenticated (store auth state in React state only, not localStorage), show a dashboard with tabs/sections for: (1) Products — add new product form, list all products with edit/delete/mark-as-bestseller actions; (2) Orders — list all orders with customer info, items, total, current status, and a status update dropdown; (3) Custom Order Requests — list all submitted custom orders with all fields including image preview; (4) Return Requests — list all return submissions.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AdminPage.tsx",
-          "frontend/src/components/admin/AdminPasscodeGate.tsx",
-          "frontend/src/components/admin/AdminDashboard.tsx",
-          "frontend/src/components/admin/ProductsManagement.tsx",
-          "frontend/src/components/admin/AddProductForm.tsx",
-          "frontend/src/components/admin/EditProductForm.tsx",
-          "frontend/src/components/admin/OrdersManagement.tsx",
-          "frontend/src/components/admin/CustomOrdersViewer.tsx",
-          "frontend/src/components/admin/ReturnRequestsViewer.tsx",
-          "frontend/src/hooks/useAdminAuth.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AdminPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-13",
-        "summary": "Build an elegant top navbar that includes: the 'knotankey' brand logo/wordmark on the left, navigation links (Home, Products, Custom Order, Returns) in the center, and icons on the right for cart (with item count badge) and the music toggle. The navbar should be sticky/fixed at the top with a soft frosted-glass or slightly opaque warm background. Build an elegant footer with: Instagram and Pinterest social links, contact info, policy links (Returns), and a newsletter signup input (email input + Subscribe button that saves the email to the backend).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/layout/Navbar.tsx",
-          "frontend/src/components/layout/Footer.tsx",
-          "frontend/src/components/layout/NewsletterSignup.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/layout/Navbar.tsx",
-          "frontend/src/components/layout/Footer.tsx",
-          "frontend/src/components/layout/NewsletterSignup.tsx",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-14",
-        "summary": "Implement the background music toggle UI. Include a mute/unmute button (musical note or speaker icon) in the navbar. Wire it to an HTML audio element that references a placeholder audio file path '/assets/music/background.mp3'. The toggle should switch between playing and paused states with a smooth icon transition. Add a comment in the code indicating where to place the audio file. Music should NOT autoplay on page load.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/layout/MusicToggle.tsx",
-          "frontend/src/hooks/useMusicPlayer.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/layout/MusicToggle.tsx"
-        ]
-      },
-      {
-        "id": "REQ-15",
-        "summary": "Generate all product images as curated Unsplash image URLs for the 8 sample products. Images must feel warm, beige, cozy, and handmade — matching a soft luxury crochet aesthetic. Also generate: a hero background image (large luxury crochet blanket or bag, warm beige tones), an about section background image (soft fabric/textile texture), and a hero logo/wordmark image for knotankey.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/data/seedProducts.ts",
-          "frontend/src/components/home/HeroSection.tsx",
-          "frontend/src/components/home/AboutSection.tsx",
-          "frontend/src/components/layout/Navbar.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/home/HeroSection.tsx",
-          "frontend/src/components/home/AboutSection.tsx",
-          "frontend/src/components/layout/Navbar.tsx"
+          "frontend/src/pages/CheckoutPage.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Implement admin authentication in the backend using a hardcoded passcode 'knotankey_admin_2026'. All admin operations (product CRUD, order management, custom order viewer) must require this passcode as a parameter and return an error if it does not match.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Build a full React + TypeScript frontend application with React Router for client-side navigation. Routes: / (Homepage), /products (All Products), /products/:id (Product Detail), /cart (Cart), /checkout (Checkout), /checkout/thank-you (Thank You), /custom-order (Custom Order), /returns (Returns), /admin (Admin Panel). Implement a global loading screen with a spinning yarn animation shown on initial app load.",
+        "summary": "On the ThankYouPage (order confirmation page), add a payment instructions message block displayed below the existing order confirmation message. The message should read: 'Your order has been received. We will review your order and send a secure payment link to your email shortly to complete the purchase. Please complete the payment through that link to confirm your order.' Style this message to match the soft luxury knotankey aesthetic, consistent with the notice box added on the checkout page.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/LoadingScreen.tsx",
-          "frontend/src/hooks/useAppLoader.ts"
+          "frontend/src/pages/ThankYouPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/LoadingScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Apply a consistent soft-luxury visual theme across the entire site: soft beige/cream/warm white background (#FAF7F2, #F5EFE6 tones), subtle linen/fabric texture background, elegant serif headings (e.g. Playfair Display) paired with clean sans-serif body text (e.g. Lato or DM Sans), rounded corners throughout, soft shadow cards, slow hover animations (fade-up, blur-in, smooth scale), product cards lift slightly on hover with image zoom, buttons glow softly on hover, no harsh animations. Enforce this design system consistently across all pages.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/ui/Card.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Build the Homepage with: (1) A full-viewport parallax hero section with a warm crochet-aesthetic Unsplash background image, large 'knotankey' brand heading, tagline 'Soft Luxury, Handcrafted With Love', and a 'Shop Now' CTA button. Add a subtle floating/drifting yarn/orb particle animation layered over the hero background. (2) A 'Best Sellers' section displaying 4 bestseller products from the backend, each as a card with image (hover zoom), name, price, Quick Add to Cart button, and View Product button. (3) An About section with the text 'knotankey creates soft luxury crocheted pieces designed to bring warmth, comfort, and elegance into everyday life.' with a soft fabric-styled background and fade-in animation on scroll. (4) A CTA banner with text 'Wrap Yourself in Handmade Luxury' and an 'Explore All Products' button.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/HomePage.tsx",
-          "frontend/src/components/home/HeroSection.tsx",
-          "frontend/src/components/home/FloatingYarnAnimation.tsx",
-          "frontend/src/components/home/BestSellersSection.tsx",
-          "frontend/src/components/home/AboutSection.tsx",
-          "frontend/src/components/home/CTABanner.tsx",
-          "frontend/src/components/ProductCard.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/HomePage.tsx",
-          "frontend/src/components/home/HeroSection.tsx",
-          "frontend/src/components/home/FloatingYarnAnimation.tsx",
-          "frontend/src/components/home/BestSellersSection.tsx",
-          "frontend/src/components/home/AboutSection.tsx",
-          "frontend/src/components/home/CTABanner.tsx",
-          "frontend/src/components/ProductCard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Build the All Products page (/products) with a responsive grid layout. Fetch all products from the backend. Provide filter controls for: category (dropdown), price range (min/max inputs or slider), and bestseller toggle. Provide sorting options: Price low to high, Price high to low, Newest. Each product card shows image, title, price, and a View Product button. Filtering and sorting are applied client-side.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/ProductsPage.tsx",
-          "frontend/src/components/products/ProductFilters.tsx",
-          "frontend/src/components/products/ProductSort.tsx",
-          "frontend/src/hooks/useProductFilters.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/ProductsPage.tsx",
-          "frontend/src/hooks/useProductFilters.ts"
-        ]
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Build the Product Detail page (/products/:id). Fetch the product by ID from the backend. Display: a large product image (with smooth zoom on hover), product title, price, description, a quantity selector (increment/decrement), an Add to Cart button with an elegant animation on click, and a Buy Now button that adds to cart and navigates to /checkout.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/ProductDetailPage.tsx",
-          "frontend/src/components/product-detail/QuantitySelector.tsx",
-          "frontend/src/components/product-detail/ProductImage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/ProductDetailPage.tsx",
-          "frontend/src/components/product-detail/QuantitySelector.tsx"
-        ]
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Implement a cart system using React Context + localStorage for persistence. The cart stores items (productId, title, price, image, quantity). Build the Cart page (/cart) displaying: product image, title, price, quantity selector, remove button, subtotal per item, cart total, and a Proceed to Checkout button. Implement a slide-in cart drawer/sidebar that animates from the right side, accessible from a cart icon in the navbar.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/context/CartContext.tsx",
-          "frontend/src/pages/CartPage.tsx",
-          "frontend/src/components/cart/CartItem.tsx",
-          "frontend/src/components/cart/CartDrawer.tsx",
-          "frontend/src/hooks/useCartDrawer.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/context/CartContext.tsx",
-          "frontend/src/pages/CartPage.tsx",
-          "frontend/src/components/cart/CartItem.tsx",
-          "frontend/src/components/cart/CartDrawer.tsx"
-        ]
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Build the Checkout page (/checkout) with a two-column layout: left column collects customer info (Full Name, Email, Phone, Shipping Address, City, Postal Code, Country) with validation; right column shows an Order Summary (items, quantities, prices, total). Include a 'Place Order' button that submits the order to the backend (mocked payment — no real payment processing) and redirects to /checkout/thank-you. Structure the payment section with a clearly commented placeholder so Stripe can be integrated later. Build a Thank You page that confirms the order with an elegant animation.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/CheckoutPage.tsx",
-          "frontend/src/components/checkout/CheckoutForm.tsx",
-          "frontend/src/components/checkout/OrderSummary.tsx",
-          "frontend/src/pages/ThankYouPage.tsx",
-          "frontend/src/hooks/useCheckout.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/CheckoutPage.tsx",
-          "frontend/src/components/checkout/OrderSummary.tsx",
           "frontend/src/pages/ThankYouPage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/blob-storage/Mixin.mo",
-    "backend/blob-storage/Storage.mo",
-    "backend/main.mo",
     "build-request.json",
-    "build-template/Dockerfile",
-    "build-template/LICENSE",
-    "build-template/README.md",
-    "build-template/deploy.sh",
-    "build-template/icp.yaml",
-    "build-template/package.json",
-    "build-template/pnpm-lock.yaml",
-    "build-template/pnpm-workspace.yaml",
-    "build-template/scripts/prune-unused-images.js",
-    "build-template/scripts/resize-images.js",
-    "build-template/src/backend/canister.yaml",
-    "build-template/src/backend/system-idl/aaaaa-aa.did",
-    "build-template/src/frontend/canister.yaml",
-    "build-template/src/frontend/components.json",
-    "build-template/src/frontend/env.json",
-    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
-    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
-    "build-template/src/frontend/eslint.config.js",
-    "build-template/src/frontend/package.json",
-    "build-template/src/frontend/postcss.config.js",
-    "build-template/src/frontend/src/components/ui/accordion.tsx",
-    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
-    "build-template/src/frontend/src/components/ui/alert.tsx",
-    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
-    "build-template/src/frontend/src/components/ui/avatar.tsx",
-    "build-template/src/frontend/src/components/ui/badge.tsx",
-    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
-    "build-template/src/frontend/src/components/ui/button.tsx",
-    "build-template/src/frontend/src/components/ui/calendar.tsx",
-    "build-template/src/frontend/src/components/ui/card.tsx",
-    "build-template/src/frontend/src/components/ui/carousel.tsx",
-    "build-template/src/frontend/src/components/ui/chart.tsx",
-    "build-template/src/frontend/src/components/ui/checkbox.tsx",
-    "build-template/src/frontend/src/components/ui/collapsible.tsx",
-    "build-template/src/frontend/src/components/ui/command.tsx",
-    "build-template/src/frontend/src/components/ui/context-menu.tsx",
-    "build-template/src/frontend/src/components/ui/dialog.tsx",
-    "build-template/src/frontend/src/components/ui/drawer.tsx",
-    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
-    "build-template/src/frontend/src/components/ui/form.tsx",
-    "build-template/src/frontend/src/components/ui/hover-card.tsx",
-    "build-template/src/frontend/src/components/ui/input-otp.tsx",
-    "build-template/src/frontend/src/components/ui/input.tsx",
-    "build-template/src/frontend/src/components/ui/label.tsx",
-    "build-template/src/frontend/src/components/ui/menubar.tsx",
-    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
-    "build-template/src/frontend/src/components/ui/pagination.tsx",
-    "build-template/src/frontend/src/components/ui/popover.tsx",
-    "build-template/src/frontend/src/components/ui/progress.tsx",
-    "build-template/src/frontend/src/components/ui/radio-group.tsx",
-    "build-template/src/frontend/src/components/ui/resizable.tsx",
-    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
-    "build-template/src/frontend/src/components/ui/select.tsx",
-    "build-template/src/frontend/src/components/ui/separator.tsx",
-    "build-template/src/frontend/src/components/ui/sheet.tsx",
-    "build-template/src/frontend/src/components/ui/sidebar.tsx",
-    "build-template/src/frontend/src/components/ui/skeleton.tsx",
-    "build-template/src/frontend/src/components/ui/slider.tsx",
-    "build-template/src/frontend/src/components/ui/sonner.tsx",
-    "build-template/src/frontend/src/components/ui/switch.tsx",
-    "build-template/src/frontend/src/components/ui/table.tsx",
-    "build-template/src/frontend/src/components/ui/tabs.tsx",
-    "build-template/src/frontend/src/components/ui/textarea.tsx",
-    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
-    "build-template/src/frontend/src/components/ui/toggle.tsx",
-    "build-template/src/frontend/src/components/ui/tooltip.tsx",
-    "build-template/src/frontend/src/hooks/use-mobile.tsx",
-    "build-template/src/frontend/src/lib/utils.ts",
-    "build-template/src/frontend/tsconfig.json",
-    "build-template/src/frontend/vite.config.js",
-    "build-template/tsconfig.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.css",
-    "frontend/index.html",
-    "frontend/public/assets/generated/about-bg.dim_1200x600.png",
-    "frontend/public/assets/generated/hero-bg.dim_1920x1080.png",
-    "frontend/public/assets/generated/logo.dim_400x120.png",
-    "frontend/public/assets/generated/product-blanket.dim_600x600.png",
-    "frontend/public/assets/generated/product-booties.dim_600x600.png",
-    "frontend/public/assets/generated/product-cushion.dim_600x600.png",
-    "frontend/public/assets/generated/product-handbag.dim_600x600.png",
-    "frontend/public/assets/generated/product-scarf.dim_600x600.png",
-    "frontend/public/assets/generated/product-shawl.dim_600x600.png",
-    "frontend/public/assets/generated/product-throw.dim_600x600.png",
-    "frontend/public/assets/generated/product-tote.dim_600x600.png",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/LoadingScreen.tsx",
-    "frontend/src/components/ProductCard.tsx",
-    "frontend/src/components/admin/AdminCustomOrdersViewer.tsx",
-    "frontend/src/components/admin/AdminOrdersManagement.tsx",
-    "frontend/src/components/admin/AdminProductsManagement.tsx",
-    "frontend/src/components/admin/AdminReturnRequestsViewer.tsx",
-    "frontend/src/components/cart/CartDrawer.tsx",
-    "frontend/src/components/cart/CartItem.tsx",
-    "frontend/src/components/checkout/OrderSummary.tsx",
-    "frontend/src/components/home/AboutSection.tsx",
-    "frontend/src/components/home/BestSellersSection.tsx",
-    "frontend/src/components/home/CTABanner.tsx",
-    "frontend/src/components/home/FloatingYarnAnimation.tsx",
-    "frontend/src/components/home/HeroSection.tsx",
-    "frontend/src/components/layout/Footer.tsx",
-    "frontend/src/components/layout/MusicToggle.tsx",
-    "frontend/src/components/layout/Navbar.tsx",
-    "frontend/src/components/layout/NewsletterSignup.tsx",
-    "frontend/src/components/product-detail/QuantitySelector.tsx",
-    "frontend/src/config.ts",
-    "frontend/src/context/CartContext.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
-    "frontend/src/hooks/useIntersectionObserver.ts",
-    "frontend/src/hooks/useProductFilters.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/AdminPage.tsx",
-    "frontend/src/pages/CartPage.tsx",
     "frontend/src/pages/CheckoutPage.tsx",
-    "frontend/src/pages/CustomOrderPage.tsx",
-    "frontend/src/pages/HomePage.tsx",
-    "frontend/src/pages/ProductDetailPage.tsx",
-    "frontend/src/pages/ProductsPage.tsx",
-    "frontend/src/pages/ReturnsPage.tsx",
     "frontend/src/pages/ThankYouPage.tsx",
-    "frontend/src/ui-summary.json",
-    "frontend/src/utils/StorageClient.ts",
-    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

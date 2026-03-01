@@ -40,31 +40,26 @@ export default function Navbar({ onCartClick }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <img
-              src="/assets/generated/logo.dim_400x120.png"
-              alt="knotankey"
-              className="h-8 md:h-10 w-auto object-contain"
-              onError={(e) => {
-                const target = e.currentTarget;
-                target.style.display = 'none';
-                const sibling = target.nextElementSibling as HTMLElement;
-                if (sibling) sibling.style.display = 'block';
-              }}
-            />
+          <Link to="/" className="flex items-center shrink-0">
             <span
-              className="font-serif text-2xl md:text-3xl text-warm-brown tracking-widest hidden"
-              style={{ display: 'none' }}
+              style={{
+                fontFamily: "'Nunito', 'Nunito Sans', Poppins, Arial, sans-serif",
+                fontWeight: 700,
+                color: '#3D1A0A',
+                letterSpacing: '0px',
+                lineHeight: 1,
+                textTransform: 'none',
+                textShadow: 'none',
+                fontSize: '1.75rem',
+              }}
+              className="md:text-[2rem] select-none"
             >
-              knotankey
-            </span>
-            <span className="font-serif text-2xl md:text-3xl text-warm-brown tracking-widest ml-1">
-              knotankey
+              Knotankey
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Desktop Nav — centered */}
+          <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
             {navLinks.map(link => (
               <Link
                 key={link.to}
@@ -84,7 +79,7 @@ export default function Navbar({ onCartClick }: NavbarProps) {
           </nav>
 
           {/* Right icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <MusicToggle />
 
             <button

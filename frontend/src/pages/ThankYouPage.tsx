@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearch } from '@tanstack/react-router';
-import { CheckCircle, Heart, Package } from 'lucide-react';
+import { CheckCircle, Heart, Package, Lock } from 'lucide-react';
 
 export default function ThankYouPage() {
   const [visible, setVisible] = useState(false);
@@ -38,13 +38,35 @@ export default function ThankYouPage() {
           </p>
         )}
 
+        {/* Payment via Email Notice */}
+        <div
+          className="rounded-2xl border border-[#E8DDD0] px-6 py-5 mb-6 flex items-start gap-3 text-left"
+          style={{ backgroundColor: '#F8F5F0' }}
+        >
+          <div className="mt-0.5 shrink-0">
+            <Lock className="w-4 h-4 text-warm-brown" />
+          </div>
+          <div>
+            <p className="font-serif text-sm text-warm-brown font-semibold mb-1">
+              Secure Payment Process
+            </p>
+            <p className="font-sans text-sm text-warm-tan leading-relaxed">
+              Your order has been received. We will review your order and send a secure payment link
+              to your email shortly to complete the purchase.
+            </p>
+            <p className="font-sans text-sm text-warm-tan leading-relaxed mt-2">
+              Please complete the payment through that link to confirm your order.
+            </p>
+          </div>
+        </div>
+
         <div className="bg-cream-200 rounded-3xl p-6 border border-cream-300 mb-8 text-left space-y-4">
           <div className="flex items-start gap-3">
             <Package className="w-5 h-5 text-warm-brown mt-0.5 shrink-0" />
             <div>
               <p className="font-sans text-sm text-warm-brown font-medium">What happens next?</p>
               <p className="font-sans text-sm text-warm-tan mt-1">
-                We'll begin crafting your order with love. You'll receive a confirmation email shortly.
+                We'll begin crafting your order with love once payment is confirmed. You'll receive updates via email.
               </p>
             </div>
           </div>

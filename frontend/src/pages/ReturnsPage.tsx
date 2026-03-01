@@ -26,7 +26,7 @@ const POLICY_ITEMS = [
   {
     icon: Clock,
     title: '7-Day Return Window',
-    text: 'Returns are accepted within 7 days of delivery. Please contact us as soon as possible to initiate a return.',
+    text: 'Returns are accepted within 7 days of delivery. Please contact us as soon as possible to initiate a return. An unboxing video is required to process any return request.',
   },
   {
     icon: Package,
@@ -41,7 +41,7 @@ const POLICY_ITEMS = [
   {
     icon: Mail,
     title: 'Contact Us First',
-    text: 'Before returning any item, please reach out to us at hello@knotankey.com so we can guide you through the process.',
+    text: 'Before returning any item, please reach out to us at knotankey@gmail.com so we can guide you through the process.',
   },
 ];
 
@@ -131,10 +131,10 @@ export default function ReturnsPage() {
             <p className="font-sans text-sm text-warm-tan">
               Questions? Email us at{' '}
               <a
-                href="mailto:hello@knotankey.com"
+                href="mailto:knotankey@gmail.com"
                 className="text-warm-brown hover:underline underline-offset-4 font-medium"
               >
-                hello@knotankey.com
+                knotankey@gmail.com
               </a>
             </p>
           </div>

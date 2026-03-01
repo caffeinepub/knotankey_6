@@ -1,4 +1,5 @@
 import { useCart } from '../../context/CartContext';
+import { formatINR } from '../../utils/currency';
 
 export default function OrderSummary() {
   const { items, total } = useCart();
@@ -18,7 +19,7 @@ export default function OrderSummary() {
               <p className="font-sans text-xs text-warm-tan">Qty: {item.quantity}</p>
             </div>
             <span className="font-sans text-sm text-warm-brown font-medium whitespace-nowrap">
-              ${(item.price * item.quantity).toFixed(2)}
+              {formatINR(item.price * item.quantity)}
             </span>
           </div>
         ))}
@@ -27,7 +28,7 @@ export default function OrderSummary() {
       <div className="border-t border-cream-300 pt-4 space-y-2">
         <div className="flex justify-between text-sm">
           <span className="font-sans text-warm-tan">Subtotal</span>
-          <span className="font-sans text-warm-brown">${total.toFixed(2)}</span>
+          <span className="font-sans text-warm-brown">{formatINR(total)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="font-sans text-warm-tan">Shipping</span>
@@ -35,7 +36,7 @@ export default function OrderSummary() {
         </div>
         <div className="border-t border-cream-300 pt-3 flex justify-between">
           <span className="font-sans text-sm uppercase tracking-wider text-warm-tan">Total</span>
-          <span className="font-serif text-2xl text-warm-brown">${total.toFixed(2)}</span>
+          <span className="font-serif text-2xl text-warm-brown">{formatINR(total)}</span>
         </div>
       </div>
     </div>

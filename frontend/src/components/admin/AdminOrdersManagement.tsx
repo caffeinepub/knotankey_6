@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { Package } from 'lucide-react';
 import type { Order } from '../../backend';
+import { formatINR } from '../../utils/currency';
 
 interface AdminOrdersManagementProps {
   passcode: string;
@@ -31,7 +32,7 @@ export default function AdminOrdersManagement({ passcode }: AdminOrdersManagemen
   };
 
   const formatDate = (ts: bigint) => {
-    return new Date(Number(ts) / 1_000_000).toLocaleDateString('en-US', {
+    return new Date(Number(ts) / 1_000_000).toLocaleDateString('en-IN', {
       year: 'numeric', month: 'short', day: 'numeric',
     });
   };
@@ -72,7 +73,7 @@ export default function AdminOrdersManagement({ passcode }: AdminOrdersManagemen
                 </div>
                 <div className="text-right">
                   <p className="font-serif text-xl text-warm-brown">
-                    ${(Number(order.total) / 100).toFixed(2)}
+                    {formatINR(Number(order.total) / 100)}
                   </p>
                   <p className="font-sans text-xs text-warm-tan">{order.items.length} item(s)</p>
                 </div>
@@ -82,7 +83,7 @@ export default function AdminOrdersManagement({ passcode }: AdminOrdersManagemen
               <div className="mb-4 space-y-1">
                 {order.items.map((item, i) => (
                   <p key={i} className="font-sans text-xs text-warm-tan">
-                    {item.title} × {Number(item.quantity)} — ${(Number(item.price) / 100).toFixed(2)} each
+                    {item.title} × {Number(item.quantity)} — {formatINR(Number(item.price) / 100)} each
                   </p>
                 ))}
               </div>

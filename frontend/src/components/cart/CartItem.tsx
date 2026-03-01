@@ -1,6 +1,7 @@
 import { Trash2 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import QuantitySelector from '../product-detail/QuantitySelector';
+import { formatINR } from '../../utils/currency';
 
 interface CartItemProps {
   productId: string;
@@ -21,7 +22,7 @@ export default function CartItem({ productId, title, price, imageUrl, quantity }
 
       <div className="flex-1 min-w-0">
         <h4 className="font-serif text-base text-warm-brown leading-snug mb-1 truncate">{title}</h4>
-        <p className="font-sans text-sm text-warm-tan mb-3">${price.toFixed(2)} each</p>
+        <p className="font-sans text-sm text-warm-tan mb-3">{formatINR(price)} each</p>
 
         <div className="flex items-center justify-between">
           <QuantitySelector
@@ -30,7 +31,7 @@ export default function CartItem({ productId, title, price, imageUrl, quantity }
           />
           <div className="flex items-center gap-3">
             <span className="font-serif text-base text-warm-brown font-medium">
-              ${(price * quantity).toFixed(2)}
+              {formatINR(price * quantity)}
             </span>
             <button
               onClick={() => removeFromCart(productId)}

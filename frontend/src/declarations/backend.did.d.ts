@@ -31,6 +31,10 @@ export interface CustomerInfo {
   'phone' : string,
 }
 export type ExternalBlob = Uint8Array;
+export interface NewsletterSubscriber {
+  'subscribedAt' : Time,
+  'email' : string,
+}
 export interface Order {
   'id' : string,
   'customerInfo' : CustomerInfo,
@@ -102,7 +106,8 @@ export interface _SERVICE {
   'getProductById' : ActorMethod<[string], Product>,
   'getProducts' : ActorMethod<[], Array<Product>>,
   'getReturnRequests' : ActorMethod<[string], Array<ReturnRequest>>,
-  'getSubscribers' : ActorMethod<[string], Array<string>>,
+  'getSubscribers' : ActorMethod<[string], Array<NewsletterSubscriber>>,
+  'removeSubscriber' : ActorMethod<[string, string], undefined>,
   'subscribeToNewsletter' : ActorMethod<[string], undefined>,
   'updateOrderStatus' : ActorMethod<[string, string, string], undefined>,
   'updateProduct' : ActorMethod<[string, Product], undefined>,

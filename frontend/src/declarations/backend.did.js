@@ -73,6 +73,10 @@ export const ReturnRequest = IDL.Record({
   'orderId' : IDL.Text,
   'reason' : IDL.Text,
 });
+export const NewsletterSubscriber = IDL.Record({
+  'subscribedAt' : Time,
+  'email' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -116,7 +120,8 @@ export const idlService = IDL.Service({
   'getProductById' : IDL.Func([IDL.Text], [Product], []),
   'getProducts' : IDL.Func([], [IDL.Vec(Product)], []),
   'getReturnRequests' : IDL.Func([IDL.Text], [IDL.Vec(ReturnRequest)], []),
-  'getSubscribers' : IDL.Func([IDL.Text], [IDL.Vec(IDL.Text)], []),
+  'getSubscribers' : IDL.Func([IDL.Text], [IDL.Vec(NewsletterSubscriber)], []),
+  'removeSubscriber' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'subscribeToNewsletter' : IDL.Func([IDL.Text], [], []),
   'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'updateProduct' : IDL.Func([IDL.Text, Product], [], []),
@@ -190,6 +195,10 @@ export const idlFactory = ({ IDL }) => {
     'orderId' : IDL.Text,
     'reason' : IDL.Text,
   });
+  const NewsletterSubscriber = IDL.Record({
+    'subscribedAt' : Time,
+    'email' : IDL.Text,
+  });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -233,7 +242,12 @@ export const idlFactory = ({ IDL }) => {
     'getProductById' : IDL.Func([IDL.Text], [Product], []),
     'getProducts' : IDL.Func([], [IDL.Vec(Product)], []),
     'getReturnRequests' : IDL.Func([IDL.Text], [IDL.Vec(ReturnRequest)], []),
-    'getSubscribers' : IDL.Func([IDL.Text], [IDL.Vec(IDL.Text)], []),
+    'getSubscribers' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(NewsletterSubscriber)],
+        [],
+      ),
+    'removeSubscriber' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'subscribeToNewsletter' : IDL.Func([IDL.Text], [], []),
     'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'updateProduct' : IDL.Func([IDL.Text, Product], [], []),

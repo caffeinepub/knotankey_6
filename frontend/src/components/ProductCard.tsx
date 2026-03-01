@@ -4,6 +4,7 @@ import { ShoppingBag, Eye } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { toast } from 'sonner';
 import type { Product } from '../backend';
+import { formatINR } from '../utils/currency';
 
 interface ProductCardProps {
   product: Product;
@@ -58,7 +59,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
         <p className="font-sans text-sm text-warm-tan mb-1 capitalize">{product.category}</p>
         <p className="font-serif text-xl text-warm-brown font-medium mb-4">
-          ${price.toFixed(2)}
+          {formatINR(price)}
         </p>
 
         <div className="flex gap-2">

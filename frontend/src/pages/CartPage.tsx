@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 import CartItem from '../components/cart/CartItem';
 import { ShoppingBag, ArrowRight } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
+import { formatINR } from '../utils/currency';
 
 export default function CartPage() {
   const { items, total, itemCount } = useCart();
@@ -52,7 +53,7 @@ export default function CartPage() {
                         {item.title} × {item.quantity}
                       </span>
                       <span className="font-sans text-warm-brown font-medium whitespace-nowrap">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatINR(item.price * item.quantity)}
                       </span>
                     </div>
                   ))}
@@ -61,7 +62,7 @@ export default function CartPage() {
                 <div className="border-t border-cream-300 pt-4 mb-6">
                   <div className="flex justify-between items-center">
                     <span className="font-sans text-sm uppercase tracking-wider text-warm-tan">Total</span>
-                    <span className="font-serif text-2xl text-warm-brown">${total.toFixed(2)}</span>
+                    <span className="font-serif text-2xl text-warm-brown">{formatINR(total)}</span>
                   </div>
                 </div>
 

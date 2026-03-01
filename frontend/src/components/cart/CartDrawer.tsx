@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { X, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import CartItem from './CartItem';
+import { formatINR } from '../../utils/currency';
 
 interface CartDrawerProps {
   open: boolean;
@@ -85,7 +86,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           <div className="px-6 py-5 border-t border-cream-300 bg-cream-100">
             <div className="flex justify-between items-center mb-5">
               <span className="font-sans text-sm text-warm-tan uppercase tracking-wider">Total</span>
-              <span className="font-serif text-2xl text-warm-brown">${total.toFixed(2)}</span>
+              <span className="font-serif text-2xl text-warm-brown">{formatINR(total)}</span>
             </div>
             <div className="flex flex-col gap-3">
               <button

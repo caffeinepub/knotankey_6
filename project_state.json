@@ -1,120 +1,26 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Premium soft-luxury e-commerce website for handmade crocheted brand 'knotankey'. Features homepage with hero/bestsellers/about/CTA sections, products page with filters & sorting, product detail pages, cart with localStorage persistence, mocked checkout (Stripe-ready), custom order page with base64 image upload, returns page, and admin panel. Admin passcode: knotankey_admin_2026. Music toggle UI wired up with placeholder for audio file. 8 sample products with curated Unsplash images.",
+  "summary": "E-commerce project for 'knotankey' brand. Adding 'Payment via Email' messaging to checkout and order confirmation pages, styled in soft luxury aesthetic.",
   "architectural_notes": [
-    "Admin authentication uses a simple passcode (knotankey_admin_2026) stored in environment variables — no real auth system",
-    "Payment is mocked for now; code structured so Stripe can be integrated later with minimal changes",
-    "Custom order image uploads stored as base64 in the database",
-    "Background music toggle UI is wired up but no audio file is embedded — placeholder left for user to add their own file",
-    "Cart state persists via localStorage on the client side",
-    "Orders and custom order submissions stored in backend database"
+    "Brand: knotankey — soft luxury aesthetic; primary accent color #F8F5F0 (very light beige)"
   ],
   "known_issues": [],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Warm luxury crochet blanket draped over a linen sofa in soft beige and cream tones, hero background (hero-bg.dim_1920x1080.png)\n- Soft woven fabric or linen textile close-up texture in warm beige tones, about section background (about-bg.dim_1200x600.png)\n- Elegant handwritten-style wordmark logo 'knotankey' in warm brown on cream background (logo.dim_400x120.png)\n- Cozy ivory crochet blanket folded on a wooden surface with warm light (product-blanket.dim_600x600.png)\n- Soft pearl-toned crocheted handbag on a linen background (product-handbag.dim_600x600.png)\n- Blush pink crocheted shawl draped over a chair in warm natural light (product-shawl.dim_600x600.png)\n- Sandstone-toned crocheted cushion cover on a beige sofa (product-cushion.dim_600x600.png)\n- Golden hour warm-toned crocheted tote bag on a wooden table (product-tote.dim_600x600.png)\n- Cream colored crocheted scarf loosely folded on a soft surface (product-scarf.dim_600x600.png)\n- Tiny white crocheted baby booties on a soft cream blanket (product-booties.dim_600x600.png)\n- Large moonlight-white crochet throw blanket in natural soft lighting (product-throw.dim_600x600.png)",
   "existing_features": [
     {
-      "id": "feature-build-a-full-react-typescript-frontend-application-with-react-router-for-client-side-navigation-routes-homepage-products-all-products-products-id-product-detail-cart-cart-checkout-checkout-checkout-thank-you-thank-you-custom-order-custom-order-returns-returns-admin-admin-panel-implement-a-global-loading-screen-with-a-spinning-yarn-animation-shown-on-initial-app-load",
-      "title": "Build a full React + TypeScript frontend application with React Router for client-side navigation. Routes: / (Homepage), /products (All Products), /products/:id (Product Detail), /cart (Cart), /checkout (Checkout), /checkout/thank-you (Thank You), /custom-order (Custom Order), /returns (Returns), /admin (Admin Panel). Implement a global loading screen with a spinning yarn animation shown on initial app load.",
+      "id": "feature-on-the-checkoutpage-add-a-secure-payment-process-notice-box-positioned-between-the-order-total-display-and-the-place-order-button-the-box-must-have-a-background-color-of-f8f5f0-very-light-beige-rounded-corners-a-small-lock-icon-on-the-left-and-comfortable-vertical-margin-above-and-below-the-title-text-should-read-secure-payment-process-and-the-body-should-read-after-placing-your-order-we-will-send-a-secure-payment-link-to-your-email-payment-will-be-completed-securely-through-that-link-to-confirm-your-order-all-typography-and-styling-must-match-the-existing-knotankey-soft-luxury-aesthetic",
+      "title": "On the CheckoutPage, add a 'Secure Payment Process' notice box positioned between the Order Total display and the Place Order button. The box must have a background color of #F8F5F0 (very light beige), rounded corners, a small lock icon on the left, and comfortable vertical margin above and below. The title text should read 'Secure Payment Process' and the body should read: 'After placing your order, we will send a secure payment link to your email. Payment will be completed securely through that link to confirm your order.' All typography and styling must match the existing knotankey soft luxury aesthetic.",
       "reqIds": [
-        "REQ-3"
+        "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-apply-a-consistent-soft-luxury-visual-theme-across-the-entire-site-soft-beige-cream-warm-white-background-faf7f2-f5efe6-tones-subtle-linen-fabric-texture-background-elegant-serif-headings-e-g-playfair-display-paired-with-clean-sans-serif-body-text-e-g-lato-or-dm-sans-rounded-corners-throughout-soft-shadow-cards-slow-hover-animations-fade-up-blur-in-smooth-scale-product-cards-lift-slightly-on-hover-with-image-zoom-buttons-glow-softly-on-hover-no-harsh-animations-enforce-this-design-system-consistently-across-all-pages",
-      "title": "Apply a consistent soft-luxury visual theme across the entire site: soft beige/cream/warm white background (#FAF7F2, #F5EFE6 tones), subtle linen/fabric texture background, elegant serif headings (e.g. Playfair Display) paired with clean sans-serif body text (e.g. Lato or DM Sans), rounded corners throughout, soft shadow cards, slow hover animations (fade-up, blur-in, smooth scale), product cards lift slightly on hover with image zoom, buttons glow softly on hover, no harsh animations. Enforce this design system consistently across all pages.",
+      "id": "feature-on-the-thankyoupage-order-confirmation-page-add-a-payment-instructions-message-block-displayed-below-the-existing-order-confirmation-message-the-message-should-read-your-order-has-been-received-we-will-review-your-order-and-send-a-secure-payment-link-to-your-email-shortly-to-complete-the-purchase-please-complete-the-payment-through-that-link-to-confirm-your-order-style-this-message-to-match-the-soft-luxury-knotankey-aesthetic-consistent-with-the-notice-box-added-on-the-checkout-page",
+      "title": "On the ThankYouPage (order confirmation page), add a payment instructions message block displayed below the existing order confirmation message. The message should read: 'Your order has been received. We will review your order and send a secure payment link to your email shortly to complete the purchase. Please complete the payment through that link to confirm your order.' Style this message to match the soft luxury knotankey aesthetic, consistent with the notice box added on the checkout page.",
       "reqIds": [
-        "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-homepage-with-1-a-full-viewport-parallax-hero-section-with-a-warm-crochet-aesthetic-unsplash-background-image-large-knotankey-brand-heading-tagline-soft-luxury-handcrafted-with-love-and-a-shop-now-cta-button-add-a-subtle-floating-drifting-yarn-orb-particle-animation-layered-over-the-hero-background-2-a-best-sellers-section-displaying-4-bestseller-products-from-the-backend-each-as-a-card-with-image-hover-zoom-name-price-quick-add-to-cart-button-and-view-product-button-3-an-about-section-with-the-text-knotankey-creates-soft-luxury-crocheted-pieces-designed-to-bring-warmth-comfort-and-elegance-into-everyday-life-with-a-soft-fabric-styled-background-and-fade-in-animation-on-scroll-4-a-cta-banner-with-text-wrap-yourself-in-handmade-luxury-and-an-explore-all-products-button",
-      "title": "Build the Homepage with: (1) A full-viewport parallax hero section with a warm crochet-aesthetic Unsplash background image, large 'knotankey' brand heading, tagline 'Soft Luxury, Handcrafted With Love', and a 'Shop Now' CTA button. Add a subtle floating/drifting yarn/orb particle animation layered over the hero background. (2) A 'Best Sellers' section displaying 4 bestseller products from the backend, each as a card with image (hover zoom), name, price, Quick Add to Cart button, and View Product button. (3) An About section with the text 'knotankey creates soft luxury crocheted pieces designed to bring warmth, comfort, and elegance into everyday life.' with a soft fabric-styled background and fade-in animation on scroll. (4) A CTA banner with text 'Wrap Yourself in Handmade Luxury' and an 'Explore All Products' button.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-all-products-page-products-with-a-responsive-grid-layout-fetch-all-products-from-the-backend-provide-filter-controls-for-category-dropdown-price-range-min-max-inputs-or-slider-and-bestseller-toggle-provide-sorting-options-price-low-to-high-price-high-to-low-newest-each-product-card-shows-image-title-price-and-a-view-product-button-filtering-and-sorting-are-applied-client-side",
-      "title": "Build the All Products page (/products) with a responsive grid layout. Fetch all products from the backend. Provide filter controls for: category (dropdown), price range (min/max inputs or slider), and bestseller toggle. Provide sorting options: Price low to high, Price high to low, Newest. Each product card shows image, title, price, and a View Product button. Filtering and sorting are applied client-side.",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-product-detail-page-products-id-fetch-the-product-by-id-from-the-backend-display-a-large-product-image-with-smooth-zoom-on-hover-product-title-price-description-a-quantity-selector-increment-decrement-an-add-to-cart-button-with-an-elegant-animation-on-click-and-a-buy-now-button-that-adds-to-cart-and-navigates-to-checkout",
-      "title": "Build the Product Detail page (/products/:id). Fetch the product by ID from the backend. Display: a large product image (with smooth zoom on hover), product title, price, description, a quantity selector (increment/decrement), an Add to Cart button with an elegant animation on click, and a Buy Now button that adds to cart and navigates to /checkout.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-cart-system-using-react-context-localstorage-for-persistence-the-cart-stores-items-productid-title-price-image-quantity-build-the-cart-page-cart-displaying-product-image-title-price-quantity-selector-remove-button-subtotal-per-item-cart-total-and-a-proceed-to-checkout-button-implement-a-slide-in-cart-drawer-sidebar-that-animates-from-the-right-side-accessible-from-a-cart-icon-in-the-navbar",
-      "title": "Implement a cart system using React Context + localStorage for persistence. The cart stores items (productId, title, price, image, quantity). Build the Cart page (/cart) displaying: product image, title, price, quantity selector, remove button, subtotal per item, cart total, and a Proceed to Checkout button. Implement a slide-in cart drawer/sidebar that animates from the right side, accessible from a cart icon in the navbar.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-checkout-page-checkout-with-a-two-column-layout-left-column-collects-customer-info-full-name-email-phone-shipping-address-city-postal-code-country-with-validation-right-column-shows-an-order-summary-items-quantities-prices-total-include-a-place-order-button-that-submits-the-order-to-the-backend-mocked-payment-no-real-payment-processing-and-redirects-to-checkout-thank-you-structure-the-payment-section-with-a-clearly-commented-placeholder-so-stripe-can-be-integrated-later-build-a-thank-you-page-that-confirms-the-order-with-an-elegant-animation",
-      "title": "Build the Checkout page (/checkout) with a two-column layout: left column collects customer info (Full Name, Email, Phone, Shipping Address, City, Postal Code, Country) with validation; right column shows an Order Summary (items, quantities, prices, total). Include a 'Place Order' button that submits the order to the backend (mocked payment — no real payment processing) and redirects to /checkout/thank-you. Structure the payment section with a clearly commented placeholder so Stripe can be integrated later. Build a Thank You page that confirms the order with an elegant animation.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-custom-order-page-custom-order-with-the-heading-design-your-own-crochet-piece-include-a-form-with-product-type-selector-bag-blanket-sweater-decor-color-preference-text-input-size-input-description-textarea-inspiration-image-file-upload-convert-to-base64-and-store-budget-range-selector-email-input-submit-button-labeled-request-custom-piece-on-submit-send-the-form-data-including-the-base64-image-to-the-backend-and-show-a-success-confirmation",
-      "title": "Build the Custom Order page (/custom-order) with the heading 'Design Your Own Crochet Piece'. Include a form with: Product type selector (bag, blanket, sweater, decor), Color preference text input, Size input, Description textarea, Inspiration image file upload (convert to base64 and store), Budget range selector, Email input. Submit button labeled 'Request Custom Piece'. On submit, send the form data including the base64 image to the backend and show a success confirmation.",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-returns-page-returns-with-policy-section-explaining-7-day-return-policy-unused-handmade-items-only-custom-orders-non-refundable-and-a-contact-email-below-the-policy-include-a-return-request-form-with-fields-order-id-email-reason-dropdown-description-textarea-submitting-the-form-saves-the-return-request-to-the-backend-and-shows-a-confirmation-message",
-      "title": "Build the Returns page (/returns) with: policy section explaining 7-day return policy, unused handmade items only, custom orders non-refundable, and a contact email. Below the policy, include a return request form with fields: Order ID, Email, Reason (dropdown), Description (textarea). Submitting the form saves the return request to the backend and shows a confirmation message.",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-admin-panel-admin-as-a-protected-route-show-a-passcode-entry-screen-first-only-proceed-if-the-user-enters-knotankey-admin-2026-once-authenticated-store-auth-state-in-react-state-only-not-localstorage-show-a-dashboard-with-tabs-sections-for-1-products-add-new-product-form-list-all-products-with-edit-delete-mark-as-bestseller-actions-2-orders-list-all-orders-with-customer-info-items-total-current-status-and-a-status-update-dropdown-3-custom-order-requests-list-all-submitted-custom-orders-with-all-fields-including-image-preview-4-return-requests-list-all-return-submissions",
-      "title": "Build the Admin Panel (/admin) as a protected route. Show a passcode entry screen first; only proceed if the user enters 'knotankey_admin_2026'. Once authenticated (store auth state in React state only, not localStorage), show a dashboard with tabs/sections for: (1) Products — add new product form, list all products with edit/delete/mark-as-bestseller actions; (2) Orders — list all orders with customer info, items, total, current status, and a status update dropdown; (3) Custom Order Requests — list all submitted custom orders with all fields including image preview; (4) Return Requests — list all return submissions.",
-      "reqIds": [
-        "REQ-12"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-an-elegant-top-navbar-that-includes-the-knotankey-brand-logo-wordmark-on-the-left-navigation-links-home-products-custom-order-returns-in-the-center-and-icons-on-the-right-for-cart-with-item-count-badge-and-the-music-toggle-the-navbar-should-be-sticky-fixed-at-the-top-with-a-soft-frosted-glass-or-slightly-opaque-warm-background-build-an-elegant-footer-with-instagram-and-pinterest-social-links-contact-info-policy-links-returns-and-a-newsletter-signup-input-email-input-subscribe-button-that-saves-the-email-to-the-backend",
-      "title": "Build an elegant top navbar that includes: the 'knotankey' brand logo/wordmark on the left, navigation links (Home, Products, Custom Order, Returns) in the center, and icons on the right for cart (with item count badge) and the music toggle. The navbar should be sticky/fixed at the top with a soft frosted-glass or slightly opaque warm background. Build an elegant footer with: Instagram and Pinterest social links, contact info, policy links (Returns), and a newsletter signup input (email input + Subscribe button that saves the email to the backend).",
-      "reqIds": [
-        "REQ-13"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-the-background-music-toggle-ui-include-a-mute-unmute-button-musical-note-or-speaker-icon-in-the-navbar-wire-it-to-an-html-audio-element-that-references-a-placeholder-audio-file-path-assets-music-background-mp3-the-toggle-should-switch-between-playing-and-paused-states-with-a-smooth-icon-transition-add-a-comment-in-the-code-indicating-where-to-place-the-audio-file-music-should-not-autoplay-on-page-load",
-      "title": "Implement the background music toggle UI. Include a mute/unmute button (musical note or speaker icon) in the navbar. Wire it to an HTML audio element that references a placeholder audio file path '/assets/music/background.mp3'. The toggle should switch between playing and paused states with a smooth icon transition. Add a comment in the code indicating where to place the audio file. Music should NOT autoplay on page load.",
-      "reqIds": [
-        "REQ-14"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-generate-all-product-images-as-curated-unsplash-image-urls-for-the-8-sample-products-images-must-feel-warm-beige-cozy-and-handmade-matching-a-soft-luxury-crochet-aesthetic-also-generate-a-hero-background-image-large-luxury-crochet-blanket-or-bag-warm-beige-tones-an-about-section-background-image-soft-fabric-textile-texture-and-a-hero-logo-wordmark-image-for-knotankey",
-      "title": "Generate all product images as curated Unsplash image URLs for the 8 sample products. Images must feel warm, beige, cozy, and handmade — matching a soft luxury crochet aesthetic. Also generate: a hero background image (large luxury crochet blanket or bag, warm beige tones), an about section background image (soft fabric/textile texture), and a hero logo/wordmark image for knotankey.",
-      "reqIds": [
-        "REQ-15"
+        "REQ-2"
       ],
       "version": 1
     }
@@ -122,78 +28,14 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Homepage with hero (parallax, floating yarn animation), bestsellers (4 products), about section, and CTA",
+      "summary": "Add 'Payment via Email' notice box on checkout page (between Order Total and Place Order button) with lock icon, beige #F8F5F0 background, rounded corners, and branded messaging",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "All Products page (/products) with grid layout, category/price/bestseller filters, and sorting options",
+      "summary": "Add payment via email instructions on order confirmation/thank you page below the confirmation message",
       "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Product detail page with image gallery, quantity selector, add to cart, and buy now",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Cart page with slide-in animation and localStorage persistence",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Checkout page with mocked payment (Stripe-ready structure) and Thank You redirect",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Custom Order page (/custom-order) with form and base64 image upload stored in backend",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Returns page (/returns) with policy info and return request form",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Admin panel with product CRUD, bestseller toggle, order management, and custom order request viewer (protected by passcode)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-9",
-      "summary": "Loading screen with spinning yarn animation, soft background music toggle UI (placeholder audio), elegant footer with social links and newsletter signup",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-10",
-      "summary": "8 sample products with curated Unsplash images (warm, beige, cozy crochet aesthetic)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-11",
-      "summary": "Set up the Motoko backend with a single actor that stores: products (productId, title, description, price, image URL, category, bestseller flag, createdAt), orders (orderId, customerInfo, items, total, status, createdAt), custom order requests (requestId, productType, colorPreference, size, description, inspirationImageBase64, budgetRange, email, createdAt), return requests (requestId, orderId, email, reason, description, createdAt), and newsletter subscribers (email). Seed the backend with 8 sample products on first deploy.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-12",
-      "summary": "Implement admin authentication in the backend using a hardcoded passcode 'knotankey_admin_2026'. All admin operations (product CRUD, order management, custom order viewer) must require this passcode as a parameter and return an error if it does not match.",
-      "reqIds": [
-        "REQ-2"
-      ],
       "status": "pending"
     }
   ],

@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, Star, StarOff, Loader2, X, Check } from 'lucide-react';
 import { ExternalBlob } from '../../backend';
 import type { Product } from '../../backend';
+import { formatINR } from '../../utils/currency';
 
 interface AdminProductsManagementProps {
   passcode: string;
@@ -81,14 +82,14 @@ function ProductForm({
           />
         </div>
         <div>
-          <Label className="font-sans text-xs tracking-wider uppercase text-warm-tan mb-1 block">Price (USD) *</Label>
+          <Label className="font-sans text-xs tracking-wider uppercase text-warm-tan mb-1 block">Price (₹) *</Label>
           <Input
             type="number"
             min="0"
-            step="0.01"
+            step="1"
             value={form.price}
             onChange={e => update('price', e.target.value)}
-            placeholder="0.00"
+            placeholder="e.g. 899"
             className="bg-white border-cream-300 rounded-xl font-sans text-sm text-warm-brown"
           />
         </div>
@@ -157,8 +158,8 @@ function ProductForm({
 
 export default function AdminProductsManagement({ passcode }: AdminProductsManagementProps) {
   const { data: products = [], isLoading } = useGetProducts();
-  const { mutate: createProduct, isPending: isCreating } = useCreateProduct();
-  const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
+  const { mutateAsync: createProduct, isPending: isCreating } = useCreateProduct();
+  const { mutateAsync: updateProduct, isPending: isUpdating } = useUpdateProduct();
   const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -176,6 +177,7 @@ export default function AdminProductsManagement({ passcode }: AdminProductsManag
     } else if (existingProduct) {
       image = existingProduct.image;
     } else {
+      // Minimal 1x1 transparent PNG as placeholder
       const placeholder = new Uint8Array([
         137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82,
         0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 0, 0, 0, 144, 119, 83, 222,
@@ -202,11 +204,20 @@ export default function AdminProductsManagement({ passcode }: AdminProductsManag
       toast.error('Please fill in all required fields.');
       return;
     }
-    const product = await buildProductFromForm(form, imageFile);
-    createProduct({ passcode, product }, {
-      onSuccess: () => { toast.success('Product created!'); setShowAddForm(false); },
-      onError: () => toast.error('Failed to create product.'),
-    });
+    const priceVal = parseFloat(form.price);
+    if (isNaN(priceVal) || priceVal < 0) {
+      toast.error('Please enter a valid price.');
+      return;
+    }
+    try {
+      const product = await buildProductFromForm(form, imageFile);
+      await createProduct({ passcode, product });
+      toast.success('Product created successfully!');
+      setShowAddForm(false);
+    } catch (err) {
+      console.error('Create product error:', err);
+      toast.error('Failed to create product. Please try again.');
+    }
   };
 
   const handleUpdate = async (form: ProductFormState, imageFile: File | null, existing: Product) => {
@@ -214,11 +225,15 @@ export default function AdminProductsManagement({ passcode }: AdminProductsManag
       toast.error('Please fill in all required fields.');
       return;
     }
-    const product = await buildProductFromForm(form, imageFile, existing);
-    updateProduct({ passcode, product }, {
-      onSuccess: () => { toast.success('Product updated!'); setEditingId(null); },
-      onError: () => toast.error('Failed to update product.'),
-    });
+    try {
+      const product = await buildProductFromForm(form, imageFile, existing);
+      await updateProduct({ passcode, product });
+      toast.success('Product updated!');
+      setEditingId(null);
+    } catch (err) {
+      console.error('Update product error:', err);
+      toast.error('Failed to update product.');
+    }
   };
 
   const handleDelete = (productId: string) => {
@@ -232,11 +247,11 @@ export default function AdminProductsManagement({ passcode }: AdminProductsManag
   const handleToggleBestseller = (product: Product) => {
     updateProduct(
       { passcode, product: { ...product, bestseller: !product.bestseller } },
-      {
-        onSuccess: () => toast.success(`Bestseller ${product.bestseller ? 'removed' : 'marked'}!`),
-        onError: () => toast.error('Failed to update product.'),
-      }
-    );
+    ).then(() => {
+      toast.success(`Bestseller ${product.bestseller ? 'removed' : 'marked'}!`);
+    }).catch(() => {
+      toast.error('Failed to update product.');
+    });
   };
 
   return (
@@ -269,84 +284,102 @@ export default function AdminProductsManagement({ passcode }: AdminProductsManag
 
       {isLoading ? (
         <div className="space-y-3">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 w-full rounded-2xl" />)}
+          {[1, 2, 3].map(i => (
+            <Skeleton key={i} className="h-20 w-full rounded-2xl" />
+          ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-16 bg-cream-50 rounded-3xl border border-cream-300">
-          <p className="font-serif text-xl text-warm-tan">No products yet</p>
-          <p className="font-sans text-sm text-warm-tan/70 mt-1">Add your first product above</p>
+        <div className="text-center py-16">
+          <p className="font-sans text-warm-tan text-sm tracking-wider">No products yet. Add your first product above.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {products.map(product => (
-            <div key={product.id}>
-              {editingId === product.id ? (
-                <div className="mb-2">
-                  <h3 className="font-serif text-lg text-warm-brown mb-3">Edit: {product.title}</h3>
-                  <ProductForm
-                    initial={{
-                      title: product.title,
-                      description: product.description,
-                      price: (Number(product.price) / 100).toFixed(2),
-                      category: product.category,
-                      bestseller: product.bestseller,
-                    }}
-                    onSubmit={(form, file) => handleUpdate(form, file, product)}
-                    onCancel={() => setEditingId(null)}
-                    isPending={isUpdating}
-                    submitLabel="Save Changes"
-                  />
-                </div>
-              ) : (
-                <div className="flex items-center gap-4 bg-card rounded-2xl border border-cream-300 p-4">
-                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-cream-200 shrink-0">
-                    <img
-                      src={product.image.getDirectURL()}
-                      alt={product.title}
-                      className="w-full h-full object-cover"
+          {products.map(product => {
+            const isEditing = editingId === product.id;
+            const imageUrl = product.image?.getDirectURL?.();
+
+            return (
+              <div key={product.id} className="bg-cream-50 rounded-2xl border border-cream-300 overflow-hidden">
+                {isEditing ? (
+                  <div className="p-4">
+                    <h3 className="font-serif text-lg text-warm-brown mb-3">Edit Product</h3>
+                    <ProductForm
+                      initial={{
+                        title: product.title,
+                        description: product.description,
+                        price: (Number(product.price) / 100).toFixed(0),
+                        category: product.category,
+                        bestseller: product.bestseller,
+                      }}
+                      onSubmit={(form, imageFile) => handleUpdate(form, imageFile, product)}
+                      onCancel={() => setEditingId(null)}
+                      isPending={isUpdating}
+                      submitLabel="Save Changes"
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-serif text-base text-warm-brown truncate">{product.title}</p>
-                      {product.bestseller && (
-                        <span className="bg-warm-brown text-cream-50 text-xs font-sans px-2 py-0.5 rounded-full shrink-0">
-                          Bestseller
-                        </span>
+                ) : (
+                  <div className="flex items-center gap-4 p-4">
+                    {/* Product image */}
+                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-cream-200 shrink-0">
+                      {imageUrl ? (
+                        <img src={imageUrl} alt={product.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-warm-tan/40">
+                          <span className="text-xs font-sans">No img</span>
+                        </div>
                       )}
                     </div>
-                    <p className="font-sans text-sm text-warm-tan">
-                      ${(Number(product.price) / 100).toFixed(2)} · {product.category}
-                    </p>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-serif text-warm-brown text-base truncate">{product.title}</p>
+                        {product.bestseller && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-warm-brown/10 text-warm-brown font-sans text-xs rounded-full">
+                            <Star className="w-3 h-3 fill-warm-brown" /> Bestseller
+                          </span>
+                        )}
+                      </div>
+                      <p className="font-sans text-xs text-warm-tan mt-0.5 capitalize">{product.category}</p>
+                      <p className="font-sans text-sm text-warm-brown font-medium mt-0.5">
+                        {formatINR(Number(product.price) / 100)}
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleToggleBestseller(product)}
+                        disabled={isUpdating}
+                        title={product.bestseller ? 'Remove bestseller' : 'Mark as bestseller'}
+                        className="p-2 rounded-full hover:bg-cream-200 text-warm-tan hover:text-warm-brown transition-colors disabled:opacity-50"
+                      >
+                        {product.bestseller
+                          ? <StarOff className="w-4 h-4" />
+                          : <Star className="w-4 h-4" />
+                        }
+                      </button>
+                      <button
+                        onClick={() => setEditingId(product.id)}
+                        title="Edit product"
+                        className="p-2 rounded-full hover:bg-cream-200 text-warm-tan hover:text-warm-brown transition-colors"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        disabled={isDeleting}
+                        title="Delete product"
+                        className="p-2 rounded-full hover:bg-red-50 text-warm-tan hover:text-red-500 transition-colors disabled:opacity-50"
+                      >
+                        {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => handleToggleBestseller(product)}
-                      className="p-2 text-warm-tan hover:text-warm-brown transition-colors rounded-xl hover:bg-cream-200"
-                      title={product.bestseller ? 'Remove bestseller' : 'Mark as bestseller'}
-                    >
-                      {product.bestseller ? <StarOff className="w-4 h-4" /> : <Star className="w-4 h-4" />}
-                    </button>
-                    <button
-                      onClick={() => setEditingId(product.id)}
-                      className="p-2 text-warm-tan hover:text-warm-brown transition-colors rounded-xl hover:bg-cream-200"
-                      title="Edit product"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      disabled={isDeleting}
-                      className="p-2 text-warm-tan hover:text-destructive transition-colors rounded-xl hover:bg-cream-200"
-                      title="Delete product"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
