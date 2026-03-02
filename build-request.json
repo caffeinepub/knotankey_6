@@ -1,33 +1,106 @@
 {
   "kind": "build_request",
-  "title": "Remove SVG icon from header button",
-  "priority": "normal",
+  "title": "Full Order Data Capture at Checkout + Admin Orders Detail View",
+  "projectName": "Yarn Boutique",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "In the Navbar component, remove the SVG icon element inside the first button in the header's top-left area. The button element itself should remain, but the inner <svg> (and its wrapping <span> if it becomes empty) should be completely removed.",
-      "target": "frontend",
+      "text": "Update the backend Order type to include all required fields: customerName, email, phone, shippingAddress (street/line1), city, state, postalCode, country, items (product list with quantities), totalPrice, orderDate (timestamp), and orderStatus. Ensure the createOrder function accepts and persists all these fields.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-3"
         ],
         "quotes": [
-          "remove this completely"
+          "Every order will now capture and persist: Customer Name, Email, Phone Number, Full Shipping Address, City, State, Postal Code, Country, Order Items, Total Price, Order Date, and Order Status."
         ]
       },
       "acceptanceCriteria": [
-        "The SVG icon previously inside the header button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[1]/div[1]/button[1]/span[1]/svg[1] is no longer rendered",
-        "No broken layout or empty space is introduced where the SVG was",
-        "The rest of the Navbar remains visually and functionally unchanged"
+        "The Order type in main.mo includes customerName, email, phone, shippingAddress, city, state, postalCode, country, items, totalPrice, orderDate, and orderStatus fields.",
+        "The createOrder endpoint accepts all these fields and stores them in stable memory.",
+        "Existing orders are not broken; migration handles schema changes if needed."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Update the CheckoutPage form to collect and submit all required order fields: customer name, email, phone number, shipping address (line 1), city, state, postal code, and country. Pass all collected fields when calling the useCreateOrder mutation.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "Every order will now capture and persist: Customer Name, Email, Phone Number, Full Shipping Address, City, State, Postal Code, Country"
+        ]
+      },
+      "acceptanceCriteria": [
+        "CheckoutPage form has input fields for name, email, phone, address, city, state, postal code, and country.",
+        "All fields are included in the Order object passed to the createOrder mutation.",
+        "Form validates that required fields are filled before submission."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Update the useCreateOrder and useGetOrders React Query hooks in useQueries.ts to reflect the new Order schema, ensuring all new fields are included in both the mutation payload and the returned data shape.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ]
+      },
+      "acceptanceCriteria": [
+        "useCreateOrder sends all new order fields to the backend.",
+        "useGetOrders returns orders with all new fields populated.",
+        "TypeScript types for Order are updated to match the new schema."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Update the AdminOrdersManagement component to display all order fields in the order list: Order ID, Customer Name, Email, Phone Number, Full Shipping Address (street, city, state, postal code, country), Products Ordered (with quantities), Total Amount, Order Status, and Order Date. Each order row/card must be clickable to open a detailed view modal or expanded panel showing the complete order information.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "Order list shows: Order ID, Customer Name, Email, Phone Number, Full Address, Products Ordered, Total Amount, Order Status, and Date",
+          "Clicking an order opens a detailed view with the complete shipping address and all order info"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin Orders list shows Order ID, Customer Name, Email, Phone, Address (all parts), Products with quantities, Total, Status, and Date for each order.",
+        "Clicking an order opens a detail modal or expanded panel.",
+        "The detail view shows the complete shipping address (street, city, state, postal code, country) and all order information.",
+        "No changes to existing UI design, layout, colors, or styling — only new data fields are added."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Generate a migration.mo file to upgrade the existing Order stable state from the old schema to the new schema that includes customerName, email, phone, shippingAddress, city, state, postalCode, country, and all other new fields, preserving all previously stored orders with safe default values for any missing fields.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ]
+      },
+      "acceptanceCriteria": [
+        "migration.mo transforms old Order records to the new schema.",
+        "Existing orders are preserved with empty string defaults for new fields that were not previously captured.",
+        "No data loss occurs during migration."
       ]
     }
   ],
   "constraints": [
-    "Do not remove the button element itself, only its inner SVG (and any now-empty wrapping span)"
+    "Do not change UI design, layout, colors, or styling — only add missing data fields and display them.",
+    "All Motoko logic must remain in the single main actor (backend/main.mo).",
+    "Do not modify files in frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui."
   ],
   "nonGoals": [
-    "Modifying any other part of the Navbar or header",
-    "Changing button functionality or click handlers"
+    "Redesigning or restyling any existing UI components.",
+    "Adding new pages or routes.",
+    "Changing the admin authentication/passcode mechanism.",
+    "Modifying the returns, custom orders, or products management flows."
   ],
   "imageRequirements": {
     "required": [],

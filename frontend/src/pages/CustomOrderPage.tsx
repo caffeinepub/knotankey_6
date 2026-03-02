@@ -186,12 +186,15 @@ export default function CustomOrderPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Color Preference */}
               <div className="space-y-2">
-                <Label htmlFor="colorPreference">Color Preference</Label>
+                <Label htmlFor="colorPreference">
+                  Color Preference <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="colorPreference"
                   name="colorPreference"
                   value={form.colorPreference}
                   onChange={handleChange}
+                  required
                   placeholder="e.g. Sage green, cream, pastel"
                 />
               </div>
@@ -223,20 +226,23 @@ export default function CustomOrderPage() {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">
+                Description <span className="text-destructive">*</span>
+              </Label>
               <Textarea
                 id="description"
                 name="description"
                 value={form.description}
                 onChange={handleChange}
                 rows={4}
+                required
                 placeholder="Describe your vision — stitch style, pattern, occasion, any special requirements…"
               />
             </div>
 
             {/* Inspiration Image */}
             <div className="space-y-2">
-              <Label>Inspiration Image (optional)</Label>
+              <Label>Inspiration Image</Label>
               {imagePreview ? (
                 <div className="relative w-40 h-40 rounded-xl overflow-hidden border border-border">
                   <img

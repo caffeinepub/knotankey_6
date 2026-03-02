@@ -1,8 +1,12 @@
 import { useCart } from '../../context/CartContext';
 import { formatINR } from '../../utils/currency';
+import { calculateShipping } from '../../utils/shipping';
 
 export default function OrderSummary() {
   const { items, total } = useCart();
+
+  const shippingCost = calculateShipping(total);
+  const grandTotal = total + shippingCost;
 
   return (
     <div className="bg-cream-200 rounded-3xl p-6 border border-cream-300">
@@ -32,11 +36,15 @@ export default function OrderSummary() {
         </div>
         <div className="flex justify-between text-sm">
           <span className="font-sans text-warm-tan">Shipping</span>
-          <span className="font-sans text-warm-brown">Free</span>
+          {shippingCost === 0 ? (
+            <span className="font-sans text-warm-brown font-medium">FREE SHIPPING</span>
+          ) : (
+            <span className="font-sans text-warm-brown">{formatINR(shippingCost)}</span>
+          )}
         </div>
         <div className="border-t border-cream-300 pt-3 flex justify-between">
           <span className="font-sans text-sm uppercase tracking-wider text-warm-tan">Total</span>
-          <span className="font-serif text-2xl text-warm-brown">{formatINR(total)}</span>
+          <span className="font-serif text-2xl text-warm-brown">{formatINR(grandTotal)}</span>
         </div>
       </div>
     </div>

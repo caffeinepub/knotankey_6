@@ -1,21 +1,54 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove SVG icon from header button",
+  "title": "Full Order Data Capture at Checkout + Admin Orders Detail View",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Remove the SVG icon element from the first button in the Navbar component's header top-left area while keeping the button itself intact",
+      "id": "REQ-2",
+      "summary": "Update CheckoutPage form to collect and submit all required order fields including customer name, email, phone number, shipping address (line 1), city, state, postal code, and country",
       "acceptanceCriteria": [
-        "The SVG icon previously inside the header button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[1]/div[1]/button[1]/span[1]/svg[1] is no longer rendered",
-        "No broken layout or empty space is introduced where the SVG was",
-        "The rest of the Navbar remains visually and functionally unchanged"
+        "CheckoutPage form has input fields for name, email, phone, address, city, state, postal code, and country.",
+        "All fields are included in the Order object passed to the createOrder mutation.",
+        "Form validates that required fields are filled before submission."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/layout/Navbar.tsx",
+          "path": "frontend/src/pages/CheckoutPage.tsx",
           "operation": "modify",
-          "description": "Locate the first button element in the header's top-left area and remove its inner SVG icon element. If the SVG is wrapped in a span element that becomes empty after removal, remove that span as well. Preserve the button element itself and all its attributes, event handlers, and styling. Ensure no broken layout or empty space remains where the SVG was located."
+          "description": "Add form fields for customerName, phone, shippingAddress (line1), city, state, postalCode, and country to the existing checkout form. Update the form state to include these new fields. Update the handleSubmit function to construct an Order object that includes all required fields (customerName, email, phone, shippingAddress, city, state, postalCode, country, items, totalPrice, orderDate, orderStatus) before calling the useCreateOrder mutation. Add validation to ensure all required fields are filled before submission. Keep existing email field and maintain current styling and layout."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Update useCreateOrder and useGetOrders React Query hooks to reflect the new Order schema with all expanded fields",
+      "acceptanceCriteria": [
+        "useCreateOrder sends all new order fields to the backend.",
+        "useGetOrders returns orders with all new fields populated.",
+        "TypeScript types for Order are updated to match the new schema."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update the Order type interface to include customerName, email, phone, shippingAddress, city, state, postalCode, and country fields (matching the backend Order type from backend.d.ts). Ensure useCreateOrder mutation passes all these fields in the order object payload. Verify useGetOrders query returns orders with all new fields populated. Update any TypeScript type definitions to match the expanded Order schema."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Update AdminOrdersManagement component to display all order fields and make each order clickable to open a detailed view modal showing complete information",
+      "acceptanceCriteria": [
+        "Admin Orders list shows Order ID, Customer Name, Email, Phone, Address (all parts), Products with quantities, Total, Status, and Date for each order.",
+        "Clicking an order opens a detail modal or expanded panel.",
+        "The detail view shows the complete shipping address (street, city, state, postal code, country) and all order information.",
+        "No changes to existing UI design, layout, colors, or styling — only new data fields are added."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/AdminOrdersManagement.tsx",
+          "operation": "modify",
+          "description": "Update the order list display to show all order fields: Order ID, Customer Name, Email, Phone Number, Full Shipping Address (street/shippingAddress, city, state, postalCode, country), Products Ordered (with quantities from items array), Total Amount, Order Status, and Order Date. Make each order row/card clickable. Add a state variable to track the selected order for detail view. Implement a detail view modal or expanded panel that opens when an order is clicked, displaying the complete shipping address (street, city, state, postal code, country) and all order information including items with quantities. Maintain existing UI design, layout, colors, and styling—only add new data fields to the display."
         }
       ]
     }

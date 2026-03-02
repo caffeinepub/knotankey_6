@@ -15,7 +15,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [adding, setAdding] = useState(false);
 
   const imageUrl = product.image.getDirectURL();
-  const price = Number(product.price) / 100;
+  // Use the raw price value directly — no division or conversion
+  const price = Number(product.price);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
-import type { Order, OrderItem, CustomerInfo } from "@/backend";
+import type { Order, OrderItem } from "@/backend";
+import { calculateShipping } from "@/utils/shipping";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -16,11 +17,12 @@ export default function CheckoutPage() {
   const createOrderMutation = useCreateOrder();
 
   const [form, setForm] = useState({
-    fullName: "",
+    customerName: "",
     email: "",
     phone: "",
-    address: "",
+    shippingAddress: "",
     city: "",
+    state: "",
     postalCode: "",
     country: "India",
   });
@@ -44,30 +46,30 @@ export default function CheckoutPage() {
       price: BigInt(Math.round(item.price)),
     }));
 
-    const total = items.reduce(
+    const subtotal = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
 
-    const customerInfo: CustomerInfo = {
-      fullName: form.fullName,
-      email: form.email,
-      phone: form.phone,
-      address: form.address,
-      city: form.city,
-      postalCode: form.postalCode,
-      country: form.country,
-    };
+    const shippingAmount = calculateShipping(subtotal);
+    const grandTotal = subtotal + shippingAmount;
 
     const orderId = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 
     const order: Order = {
       id: orderId,
-      customerInfo,
+      customerName: form.customerName,
+      email: form.email,
+      phone: form.phone,
+      shippingAddress: form.shippingAddress,
+      city: form.city,
+      state: form.state,
+      postalCode: form.postalCode,
+      country: form.country,
       items: orderItems,
-      total: BigInt(Math.round(total)),
-      status: "pending",
-      createdAt: BigInt(Date.now()) * BigInt(1_000_000),
+      totalPrice: BigInt(Math.round(grandTotal)),
+      orderDate: BigInt(Date.now()) * BigInt(1_000_000),
+      orderStatus: "pending",
     };
 
     try {
@@ -96,11 +98,11 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="customerName">Full Name</Label>
                 <Input
-                  id="fullName"
-                  name="fullName"
-                  value={form.fullName}
+                  id="customerName"
+                  name="customerName"
+                  value={form.customerName}
                   onChange={handleChange}
                   required
                   placeholder="Jane Doe"
@@ -135,18 +137,18 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="shippingAddress">Address</Label>
                 <Input
-                  id="address"
-                  name="address"
-                  value={form.address}
+                  id="shippingAddress"
+                  name="shippingAddress"
+                  value={form.shippingAddress}
                   onChange={handleChange}
                   required
                   placeholder="123 Main Street, Apt 4B"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="city">City</Label>
                   <Input
@@ -158,6 +160,20 @@ export default function CheckoutPage() {
                     placeholder="Mumbai"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">State</Label>
+                  <Input
+                    id="state"
+                    name="state"
+                    value={form.state}
+                    onChange={handleChange}
+                    required
+                    placeholder="Maharashtra"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="postalCode">Postal Code</Label>
                   <Input

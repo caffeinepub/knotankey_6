@@ -5,6 +5,7 @@ import type {
   Order,
   CustomOrderRequest,
   ReturnRequest,
+  ExternalBlob,
 } from "../backend";
 
 // ─── Products ────────────────────────────────────────────────────────────────
@@ -28,7 +29,8 @@ export function useGetBestSellers() {
     queryKey: ["bestSellers"],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getBestSellers();
+      const all = await actor.getProducts();
+      return all.filter((p) => p.bestseller);
     },
     enabled: !!actor && !isFetching,
     staleTime: 1000 * 60 * 2,
@@ -52,23 +54,36 @@ export function useGetProductById(productId: string) {
   });
 }
 
+export function useGetCategories() {
+  const { actor, isFetching } = useActor();
+  return useQuery<string[]>({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getCategories();
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 1000 * 30,
+  });
+}
+
 export function useCreateProduct() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
-      passcode,
       product,
     }: {
       passcode: string;
       product: Product;
     }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.createProduct(passcode, product);
+      return actor.createProduct(product);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["bestSellers"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
   });
 }
@@ -78,18 +93,18 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
-      passcode,
       product,
     }: {
       passcode: string;
       product: Product;
     }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.updateProduct(passcode, product);
+      return actor.updateProduct(product);
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["bestSellers"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
       queryClient.invalidateQueries({
         queryKey: ["product", variables.product.id],
       });
@@ -102,18 +117,18 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
-      passcode,
       productId,
     }: {
       passcode: string;
       productId: string;
     }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.deleteProduct(passcode, productId);
+      return actor.deleteProduct(productId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["bestSellers"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
   });
 }
@@ -126,7 +141,7 @@ export function useGetOrders(passcode: string) {
     queryKey: ["orders", passcode],
     queryFn: async () => {
       if (!actor || !passcode) return [];
-      return actor.getOrders(passcode);
+      return actor.getOrders();
     },
     enabled: !!actor && !isFetching && !!passcode,
     staleTime: 1000 * 30,
@@ -169,7 +184,6 @@ export function useUpdateOrderStatus() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
-      passcode,
       orderId,
       status,
     }: {
@@ -178,7 +192,7 @@ export function useUpdateOrderStatus() {
       status: string;
     }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.updateOrderStatus(passcode, orderId, status);
+      return actor.updateOrderStatus(orderId, status);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -194,7 +208,7 @@ export function useGetCustomOrders(passcode: string) {
     queryKey: ["customOrders", passcode],
     queryFn: async () => {
       if (!actor || !passcode) return [];
-      return actor.getCustomOrderRequests(passcode);
+      return actor.getCustomOrderRequests();
     },
     enabled: !!actor && !isFetching && !!passcode,
     staleTime: 1000 * 30,
@@ -223,7 +237,7 @@ export function useGetReturnRequests(passcode: string) {
     queryKey: ["returnRequests", passcode],
     queryFn: async () => {
       if (!actor || !passcode) return [];
-      return actor.getReturnRequests(passcode);
+      return actor.getReturnRequests();
     },
     enabled: !!actor && !isFetching && !!passcode,
     staleTime: 1000 * 30,
@@ -234,9 +248,23 @@ export function useCreateReturnRequest() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (request: ReturnRequest) => {
+    mutationFn: async ({
+      orderNumber,
+      customerName,
+      email,
+      reason,
+      message,
+      video,
+    }: {
+      orderNumber: string;
+      customerName: string;
+      email: string;
+      reason: string;
+      message: string;
+      video: ExternalBlob;
+    }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.createReturnRequest(request);
+      return actor.createReturnRequest(orderNumber, customerName, email, reason, message, video);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["returnRequests"] });

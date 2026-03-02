@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-in-the-navbar-component-remove-the-svg-icon-element-inside-the-first-button-in-the-header-s-top-left-area-the-button-element-itself-should-remain-but-the-inner-svg-and-its-wrapping-span-if-it-becomes-empty-should-be-completely-removed",
-      "featureTitle": "In the Navbar component, remove the SVG icon element inside the first button in the header's top-left area. The button element itself should remain, but the inner <svg> (and its wrapping <span> if it becomes empty) should be completely removed.",
+      "featureId": "feature-update-the-checkoutpage-form-to-collect-and-submit-all-required-order-fields-customer-name-email-phone-number-shipping-address-line-1-city-state-postal-code-and-country-pass-all-collected-fields-when-calling-the-usecreateorder-mutation",
+      "featureTitle": "Update the CheckoutPage form to collect and submit all required order fields: customer name, email, phone number, shipping address (line 1), city, state, postal code, and country. Pass all collected fields when calling the useCreateOrder mutation.",
       "files": [
-        "frontend/src/components/layout/Navbar.tsx"
+        "frontend/src/pages/CheckoutPage.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -13,10 +13,51 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-usecreateorder-and-usegetorders-react-query-hooks-in-usequeries-ts-to-reflect-the-new-order-schema-ensuring-all-new-fields-are-included-in-both-the-mutation-payload-and-the-returned-data-shape",
+      "featureTitle": "Update the useCreateOrder and useGetOrders React Query hooks in useQueries.ts to reflect the new Order schema, ensuring all new fields are included in both the mutation payload and the returned data shape.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-adminordersmanagement-component-to-display-all-order-fields-in-the-order-list-order-id-customer-name-email-phone-number-full-shipping-address-street-city-state-postal-code-country-products-ordered-with-quantities-total-amount-order-status-and-order-date-each-order-row-card-must-be-clickable-to-open-a-detailed-view-modal-or-expanded-panel-showing-the-complete-order-information",
+      "featureTitle": "Update the AdminOrdersManagement component to display all order fields in the order list: Order ID, Customer Name, Email, Phone Number, Full Shipping Address (street, city, state, postal code, country), Products Ordered (with quantities), Total Amount, Order Status, and Order Date. Each order row/card must be clickable to open a detailed view modal or expanded panel showing the complete order information.",
+      "files": [
+        "frontend/src/components/admin/AdminOrdersManagement.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }

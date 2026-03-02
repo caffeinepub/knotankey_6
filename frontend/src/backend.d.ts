@@ -14,14 +14,26 @@ export class ExternalBlob {
     static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
     withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
 }
-export interface CustomerInfo {
-    country: string;
-    city: string;
-    postalCode: string;
-    fullName: string;
+export interface Product {
+    id: string;
+    title: string;
+    createdAt: Time;
+    description: string;
+    category: string;
+    image: ExternalBlob;
+    price: bigint;
+    bestseller: boolean;
+}
+export interface CustomOrderRequest {
+    id: string;
+    inspirationImage: ExternalBlob;
+    createdAt: Time;
+    size: string;
+    description: string;
+    productType: string;
     email: string;
-    address: string;
-    phone: string;
+    colorPreference: string;
+    budgetRange: string;
 }
 export type Time = bigint;
 export interface WishlistItem {
@@ -35,60 +47,63 @@ export interface OrderItem {
     quantity: bigint;
     price: bigint;
 }
-export interface CustomOrderRequest {
-    id: string;
-    inspirationImage: ExternalBlob;
-    createdAt: Time;
-    size: string;
-    description: string;
-    productType: string;
-    email: string;
-    colorPreference: string;
-    budgetRange: string;
-}
 export interface ReturnRequest {
-    id: string;
+    customerName: string;
+    video: ExternalBlob;
     createdAt: Time;
-    description: string;
     email: string;
-    orderId: string;
+    message: string;
+    orderNumber: string;
     reason: string;
 }
 export interface Order {
     id: string;
-    customerInfo: CustomerInfo;
-    status: string;
-    total: bigint;
-    createdAt: Time;
+    customerName: string;
+    country: string;
+    orderStatus: string;
+    city: string;
+    postalCode: string;
+    orderDate: Time;
+    email: string;
+    state: string;
+    shippingAddress: string;
+    phone: string;
     items: Array<OrderItem>;
+    totalPrice: bigint;
 }
-export interface Product {
-    id: string;
-    title: string;
-    createdAt: Time;
-    description: string;
-    category: string;
-    image: ExternalBlob;
-    price: bigint;
-    bestseller: boolean;
+export interface UserProfile {
+    name: string;
+    email: string;
+}
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
 }
 export interface backendInterface {
-    addToWishlist(email: string, productId: string): Promise<void>;
+    addCategory(category: string): Promise<void>;
+    addToWishlist(productId: string): Promise<void>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCustomOrderRequest(request: CustomOrderRequest): Promise<void>;
     createOrder(order: Order): Promise<string>;
-    createProduct(passcode: string, product: Product): Promise<void>;
-    createReturnRequest(request: ReturnRequest): Promise<void>;
-    deleteProduct(passcode: string, productId: string): Promise<void>;
-    filterProductsByCategory(category: string): Promise<Array<Product>>;
-    getBestSellers(): Promise<Array<Product>>;
-    getCustomOrderRequests(passcode: string): Promise<Array<CustomOrderRequest>>;
+    createProduct(product: Product): Promise<void>;
+    createReturnRequest(orderNumber: string, customerName: string, email: string, reason: string, message: string, video: ExternalBlob): Promise<void>;
+    deleteProduct(productId: string): Promise<void>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
+    getCategories(): Promise<Array<string>>;
+    getCustomOrderRequests(): Promise<Array<CustomOrderRequest>>;
     getOrderById(orderId: string): Promise<Order>;
-    getOrders(passcode: string): Promise<Array<Order>>;
+    getOrders(): Promise<Array<Order>>;
     getProductById(productId: string): Promise<Product>;
     getProducts(): Promise<Array<Product>>;
-    getReturnRequests(passcode: string): Promise<Array<ReturnRequest>>;
-    getWishlist(email: string): Promise<Array<WishlistItem>>;
-    removeFromWishlist(email: string, productId: string): Promise<void>;
-    updateOrderStatus(passcode: string, orderId: string, status: string): Promise<void>;
-    updateProduct(passcode: string, product: Product): Promise<void>;
+    getReturnRequests(): Promise<Array<ReturnRequest>>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getWishlist(): Promise<Array<WishlistItem>>;
+    isCallerAdmin(): Promise<boolean>;
+    removeCategory(category: string): Promise<void>;
+    removeFromWishlist(productId: string): Promise<void>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    updateOrderStatus(orderId: string, status: string): Promise<void>;
+    updateProduct(product: Product): Promise<void>;
 }

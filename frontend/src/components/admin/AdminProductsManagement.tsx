@@ -40,8 +40,6 @@ interface Props {
   passcode: string;
 }
 
-const CATEGORIES = ["Accessories", "Home Décor", "Wearables", "Bags", "Other"];
-
 const emptyForm = {
   title: "",
   description: "",
@@ -123,7 +121,7 @@ export default function AdminProductsManagement({ passcode }: Props) {
       description: form.description,
       price: BigInt(Math.round(Number(form.price))),
       image,
-      category: form.category,
+      category: form.category.trim(),
       bestseller: form.bestseller,
       createdAt: editingProduct?.createdAt ?? BigInt(Date.now()) * BigInt(1_000_000),
     };
@@ -321,22 +319,15 @@ export default function AdminProductsManagement({ passcode }: Props) {
                 <Label htmlFor="category">
                   Category <span className="text-destructive">*</span>
                 </Label>
-                <select
+                <Input
                   id="category"
                   value={form.category}
                   onChange={(e) =>
                     setForm((p) => ({ ...p, category: e.target.value }))
                   }
                   required
-                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                >
-                  <option value="">Select category</option>
-                  {CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="e.g. keychains, plushies…"
+                />
               </div>
             </div>
 

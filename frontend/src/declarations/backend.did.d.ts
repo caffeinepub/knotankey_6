@@ -21,23 +21,21 @@ export interface CustomOrderRequest {
   'colorPreference' : string,
   'budgetRange' : string,
 }
-export interface CustomerInfo {
-  'country' : string,
-  'city' : string,
-  'postalCode' : string,
-  'fullName' : string,
-  'email' : string,
-  'address' : string,
-  'phone' : string,
-}
 export type ExternalBlob = Uint8Array;
 export interface Order {
   'id' : string,
-  'customerInfo' : CustomerInfo,
-  'status' : string,
-  'total' : bigint,
-  'createdAt' : Time,
+  'customerName' : string,
+  'country' : string,
+  'orderStatus' : string,
+  'city' : string,
+  'postalCode' : string,
+  'orderDate' : Time,
+  'email' : string,
+  'state' : string,
+  'shippingAddress' : string,
+  'phone' : string,
   'items' : Array<OrderItem>,
+  'totalPrice' : bigint,
 }
 export interface OrderItem {
   'title' : string,
@@ -56,14 +54,19 @@ export interface Product {
   'bestseller' : boolean,
 }
 export interface ReturnRequest {
-  'id' : string,
+  'customerName' : string,
+  'video' : ExternalBlob,
   'createdAt' : Time,
-  'description' : string,
   'email' : string,
-  'orderId' : string,
+  'message' : string,
+  'orderNumber' : string,
   'reason' : string,
 }
 export type Time = bigint;
+export interface UserProfile { 'name' : string, 'email' : string }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
 export interface WishlistItem {
   'productId' : string,
   'email' : string,
@@ -96,24 +99,35 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
-  'addToWishlist' : ActorMethod<[string, string], undefined>,
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addCategory' : ActorMethod<[string], undefined>,
+  'addToWishlist' : ActorMethod<[string], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createCustomOrderRequest' : ActorMethod<[CustomOrderRequest], undefined>,
   'createOrder' : ActorMethod<[Order], string>,
-  'createProduct' : ActorMethod<[string, Product], undefined>,
-  'createReturnRequest' : ActorMethod<[ReturnRequest], undefined>,
-  'deleteProduct' : ActorMethod<[string, string], undefined>,
-  'filterProductsByCategory' : ActorMethod<[string], Array<Product>>,
-  'getBestSellers' : ActorMethod<[], Array<Product>>,
-  'getCustomOrderRequests' : ActorMethod<[string], Array<CustomOrderRequest>>,
+  'createProduct' : ActorMethod<[Product], undefined>,
+  'createReturnRequest' : ActorMethod<
+    [string, string, string, string, string, ExternalBlob],
+    undefined
+  >,
+  'deleteProduct' : ActorMethod<[string], undefined>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getCategories' : ActorMethod<[], Array<string>>,
+  'getCustomOrderRequests' : ActorMethod<[], Array<CustomOrderRequest>>,
   'getOrderById' : ActorMethod<[string], Order>,
-  'getOrders' : ActorMethod<[string], Array<Order>>,
+  'getOrders' : ActorMethod<[], Array<Order>>,
   'getProductById' : ActorMethod<[string], Product>,
   'getProducts' : ActorMethod<[], Array<Product>>,
-  'getReturnRequests' : ActorMethod<[string], Array<ReturnRequest>>,
-  'getWishlist' : ActorMethod<[string], Array<WishlistItem>>,
-  'removeFromWishlist' : ActorMethod<[string, string], undefined>,
-  'updateOrderStatus' : ActorMethod<[string, string, string], undefined>,
-  'updateProduct' : ActorMethod<[string, Product], undefined>,
+  'getReturnRequests' : ActorMethod<[], Array<ReturnRequest>>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getWishlist' : ActorMethod<[], Array<WishlistItem>>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'removeCategory' : ActorMethod<[string], undefined>,
+  'removeFromWishlist' : ActorMethod<[string], undefined>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'updateOrderStatus' : ActorMethod<[string, string], undefined>,
+  'updateProduct' : ActorMethod<[Product], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
