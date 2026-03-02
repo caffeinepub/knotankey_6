@@ -1,35 +1,51 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-03-02T18:58:17.353Z",
-  "summary": "All five requirements are substantially implemented. REQ-1 is covered by the updated backend/main.mo Order type and createOrder. REQ-2 is covered by the updated CheckoutPage form. REQ-3 is covered by useQueries.ts updates. REQ-4 is covered by the AdminOrdersManagement component with clickable cards and OrderDetailModal. REQ-5 is covered by the new backend/migration.mo file. One minor gap exists: REQ-2 requires explicit form validation that required fields are filled before submission, which appears to rely solely on HTML required attributes without explicit JS-level validation feedback, but this is a borderline concern. Overall implementation is comprehensive.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-03-02T18:44:31.814Z",
+  "summary": "The diff implements most of the required features across REQ-1 through REQ-4. The Returns Page has all six required fields with validation, the video upload section is added, the backend ReturnRequest type is updated, and the Admin Panel displays return requests with inline video playback and download. However, there are several gaps worth noting, particularly around the exact error messages, the backend storage mechanism (uses ExternalBlob rather than Blob/[Nat8]), and whether stable storage persistence is confirmed.",
+  "missing_requirements": [
     {
-      "description": "A new utility file frontend/src/utils/urlParams.ts was added with URL parameter parsing, sessionStorage persistence, and hash-based routing helpers.",
-      "reason": "None of the five requirements mention adding or modifying URL parameter utilities. This appears to be additional functionality not requested in the build spec.",
+      "id": "REQ-3",
+      "requirement": "Submitted return requests including video data are persisted in stable storage and survive canister upgrades.",
+      "reason": "The backend/main.mo uses ExternalBlob (Storage.ExternalBlob) for the video field rather than an inline Blob/[Nat8] stored directly in the canister. While ExternalBlob may reference on-chain blob storage, there is no explicit confirmation that the video data survives canister upgrades in stable storage. The truncated main.mo does not show stable variable declarations or preupgrade/postupgrade hooks for the returnRequests map.",
       "evidence": [
-        "frontend/src/utils/urlParams.ts"
+        "backend/main.mo",
+        "backend/migration.mo"
       ]
     },
     {
-      "description": "useActor.ts was modified to import and use getSecretParameter from urlParams.ts for admin token handling.",
-      "reason": "The build request explicitly lists frontend/src/hooks/useActor.ts as a protected file that must not be modified, yet it was modified in the diff.",
+      "id": "REQ-2",
+      "requirement": "An upload progress indicator is shown while the video is being prepared/uploaded.",
+      "reason": "The ReturnsPage.tsx shows a Progress component import and uploadProgress/isUploading state, but the file is truncated and it is unclear whether the progress bar is actually rendered in the JSX for the video upload section during upload.",
       "evidence": [
-        "frontend/src/hooks/useActor.ts"
+        "frontend/src/pages/ReturnsPage.tsx"
       ]
     }
   ],
-  "confidence": 0.82,
+  "hallucinated_features": [
+    {
+      "description": "A migration module (backend/migration.mo) was added to migrate old ReturnRequest records to the new schema.",
+      "reason": "The build request did not request any migration logic or backward compatibility for existing return request records. This is an added file not mentioned in the requirements.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "description": "REASON_COLORS badge color mapping in AdminReturnRequestsViewer for different return reasons displayed as colored badges.",
+      "reason": "The build request only asked to display Order Number, Customer Name, Email, Message, and video in the admin panel. The colored Badge display for the reason field was not requested.",
+      "evidence": [
+        "frontend/src/components/admin/AdminReturnRequestsViewer.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.72,
   "changed_files": [
     "backend/main.mo",
     "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/admin/AdminOrdersManagement.tsx",
-    "frontend/src/hooks/useActor.ts",
+    "frontend/src/components/admin/AdminReturnRequestsViewer.tsx",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/CheckoutPage.tsx",
-    "frontend/src/utils/urlParams.ts",
+    "frontend/src/pages/ReturnsPage.tsx",
     "project_state.json"
   ]
 }

@@ -29,8 +29,7 @@ export function useGetBestSellers() {
     queryKey: ["bestSellers"],
     queryFn: async () => {
       if (!actor) return [];
-      const all = await actor.getProducts();
-      return all.filter((p) => p.bestseller);
+      return actor.getBestSellers();
     },
     enabled: !!actor && !isFetching,
     staleTime: 1000 * 60 * 2,
@@ -63,6 +62,7 @@ export function useGetCategories() {
       return actor.getCategories();
     },
     enabled: !!actor && !isFetching,
+    // Shorter stale time so new categories appear quickly after admin adds products
     staleTime: 1000 * 30,
   });
 }
@@ -72,13 +72,14 @@ export function useCreateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
+      passcode,
       product,
     }: {
       passcode: string;
       product: Product;
     }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.createProduct(product);
+      return actor.createProduct(passcode, product);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -93,13 +94,14 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
+      passcode,
       product,
     }: {
       passcode: string;
       product: Product;
     }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.updateProduct(product);
+      return actor.updateProduct(passcode, product);
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -117,13 +119,14 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
+      passcode,
       productId,
     }: {
       passcode: string;
       productId: string;
     }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.deleteProduct(productId);
+      return actor.deleteProduct(passcode, productId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -141,7 +144,7 @@ export function useGetOrders(passcode: string) {
     queryKey: ["orders", passcode],
     queryFn: async () => {
       if (!actor || !passcode) return [];
-      return actor.getOrders();
+      return actor.getOrders(passcode);
     },
     enabled: !!actor && !isFetching && !!passcode,
     staleTime: 1000 * 30,
@@ -184,6 +187,7 @@ export function useUpdateOrderStatus() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
+      passcode,
       orderId,
       status,
     }: {
@@ -192,7 +196,7 @@ export function useUpdateOrderStatus() {
       status: string;
     }) => {
       if (!actor) throw new Error("Actor not initialized");
-      return actor.updateOrderStatus(orderId, status);
+      return actor.updateOrderStatus(passcode, orderId, status);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -208,7 +212,7 @@ export function useGetCustomOrders(passcode: string) {
     queryKey: ["customOrders", passcode],
     queryFn: async () => {
       if (!actor || !passcode) return [];
-      return actor.getCustomOrderRequests();
+      return actor.getCustomOrderRequests(passcode);
     },
     enabled: !!actor && !isFetching && !!passcode,
     staleTime: 1000 * 30,
@@ -237,7 +241,7 @@ export function useGetReturnRequests(passcode: string) {
     queryKey: ["returnRequests", passcode],
     queryFn: async () => {
       if (!actor || !passcode) return [];
-      return actor.getReturnRequests();
+      return actor.getReturnRequests(passcode);
     },
     enabled: !!actor && !isFetching && !!passcode,
     staleTime: 1000 * 30,

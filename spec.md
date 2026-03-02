@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Capture complete order data at checkout and display full order details in the admin orders management view.
+**Goal:** Make all Returns Page form fields required (including a mandatory video upload), persist video data on-chain, and display submitted return requests with inline video playback in the Admin Panel.
 
 **Planned changes:**
-- Update the backend `Order` type in `main.mo` to include all fields: `customerName`, `email`, `phone`, `shippingAddress`, `city`, `state`, `postalCode`, `country`, `items`, `totalPrice`, `orderDate`, and `orderStatus`; update `createOrder` to accept and persist all fields
-- Create a migration to upgrade existing stored orders to the new schema with safe defaults for missing fields
-- Update the `CheckoutPage` form to collect and submit all new fields (name, email, phone, address, city, state, postal code, country) with basic validation
-- Update `useCreateOrder` and `useGetOrders` hooks and TypeScript types to reflect the new Order schema
-- Update `AdminOrdersManagement` to display all order fields (Order ID, customer name, email, phone, full address, products with quantities, total, status, date) and make each order row/card clickable to open a detail modal or expanded panel showing complete order information
+- Update the `/returns` form to require all six fields: Order Number, Customer Name, Email, Reason for Return, Message, and Video Upload; block submission if any field is empty and show per-field inline error messages.
+- Add a "Upload Unboxing / Condition Video" section to the Returns Page accepting MP4, MOV, or WEBM files up to 50MB, with a video preview and upload progress bar after file selection.
+- Update the backend (`main.mo`) `ReturnRequest` type and `submitReturnRequest` endpoint to accept and persist all six fields including video data (`[Nat8]`) in stable storage.
+- Update the Admin Panel (`/admin`) to list all submitted return requests showing Order Number, Customer Name, Email, Message, and an inline playable video with a download button; leave PIN protection untouched.
 
-**User-visible outcome:** Customers fill in a complete shipping and contact form at checkout. Admins can view all order details in the orders list and click any order to see a full detail view including shipping address, items, and contact information.
+**User-visible outcome:** Customers must fill all fields and upload a condition video before submitting a return request. Admins can view, play, and download submitted return videos directly from the admin panel.

@@ -1,30 +1,34 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "E-commerce project with checkout and admin orders functionality. Implementing full order data capture (customer name, email, phone, full shipping address, order items, total, date, status) and updating Admin Orders page to display all fields with a clickable detail view.",
-  "architectural_notes": [],
+  "summary": "E-commerce project with checkout shipping logic (₹80 below ₹2999, free above), a Returns Page at /returns with mandatory video upload and full form validation, and an Admin Panel at /admin with PIN protection for reviewing/playing/downloading submitted return requests with videos stored on-chain.",
+  "architectural_notes": [
+    "Videos uploaded via Returns Page are stored on-chain inside the canister for persistence.",
+    "Admin Panel at /admin is protected by existing PIN login — do not modify authentication or routing.",
+    "Returns Page is a standalone page at /returns — no UI/layout/styling changes permitted."
+  ],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-update-the-checkoutpage-form-to-collect-and-submit-all-required-order-fields-customer-name-email-phone-number-shipping-address-line-1-city-state-postal-code-and-country-pass-all-collected-fields-when-calling-the-usecreateorder-mutation",
-      "title": "Update the CheckoutPage form to collect and submit all required order fields: customer name, email, phone number, shipping address (line 1), city, state, postal code, and country. Pass all collected fields when calling the useCreateOrder mutation.",
+      "id": "feature-update-the-returns-page-returns-form-so-that-all-fields-are-required-order-number-customer-name-email-reason-for-return-message-and-video-upload-the-form-must-be-blocked-from-submission-if-any-field-is-empty-or-no-video-is-uploaded",
+      "title": "Update the Returns Page (/returns) form so that ALL fields are required: Order Number, Customer Name, Email, Reason for Return, Message, and Video Upload. The form must be blocked from submission if any field is empty or no video is uploaded.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-mandatory-video-upload-section-to-the-returns-page-returns-with-the-section-title-upload-unboxing-condition-video-and-description-to-process-a-return-request-please-upload-a-video-showing-the-condition-of-the-product-video-must-be-mp4-mov-or-webm-format-only-maximum-50mb-show-an-inline-error-a-product-condition-video-is-required-to-submit-a-return-request-if-no-video-is-selected-on-submission-show-a-file-preview-video-element-and-upload-progress-bar-after-a-file-is-selected",
+      "title": "Add a mandatory video upload section to the Returns Page (/returns) with the section title 'Upload Unboxing / Condition Video' and description 'To process a return request, please upload a video showing the condition of the product.' Video must be MP4, MOV, or WEBM format only, maximum 50MB. Show an inline error 'A product condition video is required to submit a return request.' if no video is selected on submission. Show a file preview (video element) and upload progress bar after a file is selected.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-the-usecreateorder-and-usegetorders-react-query-hooks-in-usequeries-ts-to-reflect-the-new-order-schema-ensuring-all-new-fields-are-included-in-both-the-mutation-payload-and-the-returned-data-shape",
-      "title": "Update the useCreateOrder and useGetOrders React Query hooks in useQueries.ts to reflect the new Order schema, ensuring all new fields are included in both the mutation payload and the returned data shape.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-adminordersmanagement-component-to-display-all-order-fields-in-the-order-list-order-id-customer-name-email-phone-number-full-shipping-address-street-city-state-postal-code-country-products-ordered-with-quantities-total-amount-order-status-and-order-date-each-order-row-card-must-be-clickable-to-open-a-detailed-view-modal-or-expanded-panel-showing-the-complete-order-information",
-      "title": "Update the AdminOrdersManagement component to display all order fields in the order list: Order ID, Customer Name, Email, Phone Number, Full Shipping Address (street, city, state, postal code, country), Products Ordered (with quantities), Total Amount, Order Status, and Order Date. Each order row/card must be clickable to open a detailed view modal or expanded panel showing the complete order information.",
+      "id": "feature-update-the-admin-panel-admin-to-display-submitted-return-requests-showing-order-number-customer-name-email-message-and-the-uploaded-video-admin-must-be-able-to-play-the-video-inline-and-download-it-the-existing-pin-protection-must-remain-completely-untouched",
+      "title": "Update the Admin Panel (/admin) to display submitted return requests showing: Order Number, Customer Name, Email, Message, and the uploaded video. Admin must be able to play the video inline and download it. The existing PIN protection must remain completely untouched.",
       "reqIds": [
         "REQ-4"
       ],
@@ -34,35 +38,33 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Save full order data at checkout: name, email, phone, full shipping address, items, total, date, status",
+      "summary": "Returns Page at /returns with mandatory video upload (MP4/MOV/WEBM, max 50MB), all fields required, inline error messages, file preview, upload progress",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Admin Orders page: display all order fields (ID, name, email, phone, address, products, total, status, date) and clickable detail view",
+      "summary": "Admin Panel at /admin displaying submitted return requests with inline video playback and download; videos stored on-chain; existing PIN protection untouched",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Update the backend Order type to include all required fields: customerName, email, phone, shippingAddress (street/line1), city, state, postalCode, country, items (product list with quantities), totalPrice, orderDate (timestamp), and orderStatus. Ensure the createOrder function accepts and persists all these fields.",
-      "reqIds": [
-        "REQ-1"
-      ],
+      "summary": "Checkout shipping logic: ₹80 for orders below ₹2999, free shipping above ₹2999, updating dynamically",
+      "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-7",
-      "summary": "Generate a migration.mo file to upgrade the existing Order stable state from the old schema to the new schema that includes customerName, email, phone, shippingAddress, city, state, postalCode, country, and all other new fields, preserving all previously stored orders with safe default values for any missing fields.",
+      "id": "AR-6",
+      "summary": "Update the backend (main.mo) to store return requests with all required fields: Order Number, Customer Name, Email, Reason for Return, Message, and the uploaded video (stored as a Blob/[Nat8] on-chain). Ensure the submitReturnRequest endpoint accepts and persists the video data.",
       "reqIds": [
-        "REQ-5"
+        "REQ-3"
       ],
       "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "Yarn Boutique",
+  "projectName": "Knot & Key",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

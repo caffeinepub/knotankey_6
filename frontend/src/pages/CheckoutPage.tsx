@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
-import type { Order, OrderItem } from "@/backend";
+import type { Order, OrderItem, CustomerInfo } from "@/backend";
 import { calculateShipping } from "@/utils/shipping";
 
 export default function CheckoutPage() {
@@ -17,12 +17,11 @@ export default function CheckoutPage() {
   const createOrderMutation = useCreateOrder();
 
   const [form, setForm] = useState({
-    customerName: "",
+    fullName: "",
     email: "",
     phone: "",
-    shippingAddress: "",
+    address: "",
     city: "",
-    state: "",
     postalCode: "",
     country: "India",
   });
@@ -54,22 +53,27 @@ export default function CheckoutPage() {
     const shippingAmount = calculateShipping(subtotal);
     const grandTotal = subtotal + shippingAmount;
 
+    const customerInfo: CustomerInfo = {
+      fullName: form.fullName,
+      email: form.email,
+      phone: form.phone,
+      address: form.address,
+      city: form.city,
+      postalCode: form.postalCode,
+      country: form.country,
+    };
+
     const orderId = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 
     const order: Order = {
       id: orderId,
-      customerName: form.customerName,
-      email: form.email,
-      phone: form.phone,
-      shippingAddress: form.shippingAddress,
-      city: form.city,
-      state: form.state,
-      postalCode: form.postalCode,
-      country: form.country,
+      customerInfo,
       items: orderItems,
-      totalPrice: BigInt(Math.round(grandTotal)),
-      orderDate: BigInt(Date.now()) * BigInt(1_000_000),
-      orderStatus: "pending",
+      subtotal: BigInt(Math.round(subtotal)),
+      shippingAmount: BigInt(Math.round(shippingAmount)),
+      total: BigInt(Math.round(grandTotal)),
+      status: "pending",
+      createdAt: BigInt(Date.now()) * BigInt(1_000_000),
     };
 
     try {
@@ -98,11 +102,11 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="space-y-2">
-                <Label htmlFor="customerName">Full Name</Label>
+                <Label htmlFor="fullName">Full Name</Label>
                 <Input
-                  id="customerName"
-                  name="customerName"
-                  value={form.customerName}
+                  id="fullName"
+                  name="fullName"
+                  value={form.fullName}
                   onChange={handleChange}
                   required
                   placeholder="Jane Doe"
@@ -137,18 +141,18 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="shippingAddress">Address</Label>
+                <Label htmlFor="address">Address</Label>
                 <Input
-                  id="shippingAddress"
-                  name="shippingAddress"
-                  value={form.shippingAddress}
+                  id="address"
+                  name="address"
+                  value={form.address}
                   onChange={handleChange}
                   required
                   placeholder="123 Main Street, Apt 4B"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="city">City</Label>
                   <Input
@@ -160,20 +164,6 @@ export default function CheckoutPage() {
                     placeholder="Mumbai"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="state">State</Label>
-                  <Input
-                    id="state"
-                    name="state"
-                    value={form.state}
-                    onChange={handleChange}
-                    required
-                    placeholder="Maharashtra"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="postalCode">Postal Code</Label>
                   <Input

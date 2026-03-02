@@ -19,11 +19,6 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
-export const UserRole = IDL.Variant({
-  'admin' : IDL.Null,
-  'user' : IDL.Null,
-  'guest' : IDL.Null,
-});
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const Time = IDL.Int;
 export const CustomOrderRequest = IDL.Record({
@@ -37,6 +32,15 @@ export const CustomOrderRequest = IDL.Record({
   'colorPreference' : IDL.Text,
   'budgetRange' : IDL.Text,
 });
+export const CustomerInfo = IDL.Record({
+  'country' : IDL.Text,
+  'city' : IDL.Text,
+  'postalCode' : IDL.Text,
+  'fullName' : IDL.Text,
+  'email' : IDL.Text,
+  'address' : IDL.Text,
+  'phone' : IDL.Text,
+});
 export const OrderItem = IDL.Record({
   'title' : IDL.Text,
   'productId' : IDL.Text,
@@ -45,18 +49,13 @@ export const OrderItem = IDL.Record({
 });
 export const Order = IDL.Record({
   'id' : IDL.Text,
-  'customerName' : IDL.Text,
-  'country' : IDL.Text,
-  'orderStatus' : IDL.Text,
-  'city' : IDL.Text,
-  'postalCode' : IDL.Text,
-  'orderDate' : Time,
-  'email' : IDL.Text,
-  'state' : IDL.Text,
-  'shippingAddress' : IDL.Text,
-  'phone' : IDL.Text,
+  'customerInfo' : CustomerInfo,
+  'status' : IDL.Text,
+  'total' : IDL.Nat,
+  'shippingAmount' : IDL.Nat,
+  'createdAt' : Time,
   'items' : IDL.Vec(OrderItem),
-  'totalPrice' : IDL.Nat,
+  'subtotal' : IDL.Nat,
 });
 export const Product = IDL.Record({
   'id' : IDL.Text,
@@ -67,10 +66,6 @@ export const Product = IDL.Record({
   'image' : ExternalBlob,
   'price' : IDL.Nat,
   'bestseller' : IDL.Bool,
-});
-export const UserProfile = IDL.Record({
-  'name' : IDL.Text,
-  'email' : IDL.Text,
 });
 export const ReturnRequest = IDL.Record({
   'customerName' : IDL.Text,
@@ -114,40 +109,35 @@ export const idlService = IDL.Service({
       [],
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
-  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'addCategory' : IDL.Func([IDL.Text], [], []),
-  'addToWishlist' : IDL.Func([IDL.Text], [], []),
-  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'addCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'addToWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'createCustomOrderRequest' : IDL.Func([CustomOrderRequest], [], []),
   'createOrder' : IDL.Func([Order], [IDL.Text], []),
-  'createProduct' : IDL.Func([Product], [], []),
+  'createProduct' : IDL.Func([IDL.Text, Product], [], []),
   'createReturnRequest' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, ExternalBlob],
       [],
       [],
     ),
-  'deleteProduct' : IDL.Func([IDL.Text], [], []),
-  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
-  'getCustomOrderRequests' : IDL.Func([], [IDL.Vec(CustomOrderRequest)], []),
-  'getOrderById' : IDL.Func([IDL.Text], [Order], ['query']),
-  'getOrders' : IDL.Func([], [IDL.Vec(Order)], []),
-  'getProductById' : IDL.Func([IDL.Text], [Product], ['query']),
-  'getProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
-  'getReturnRequests' : IDL.Func([], [IDL.Vec(ReturnRequest)], []),
-  'getUserProfile' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Opt(UserProfile)],
-      ['query'],
+  'deleteProduct' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'filterProductsByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], []),
+  'getBestSellers' : IDL.Func([], [IDL.Vec(Product)], []),
+  'getCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], []),
+  'getCustomOrderRequests' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(CustomOrderRequest)],
+      [],
     ),
-  'getWishlist' : IDL.Func([], [IDL.Vec(WishlistItem)], ['query']),
-  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'removeCategory' : IDL.Func([IDL.Text], [], []),
-  'removeFromWishlist' : IDL.Func([IDL.Text], [], []),
-  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text], [], []),
-  'updateProduct' : IDL.Func([Product], [], []),
+  'getOrderById' : IDL.Func([IDL.Text], [Order], []),
+  'getOrders' : IDL.Func([IDL.Text], [IDL.Vec(Order)], []),
+  'getProductById' : IDL.Func([IDL.Text], [Product], []),
+  'getProducts' : IDL.Func([], [IDL.Vec(Product)], []),
+  'getReturnRequests' : IDL.Func([IDL.Text], [IDL.Vec(ReturnRequest)], []),
+  'getWishlist' : IDL.Func([IDL.Text], [IDL.Vec(WishlistItem)], []),
+  'removeCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'removeFromWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  'updateProduct' : IDL.Func([IDL.Text, Product], [], []),
 });
 
 export const idlInitArgs = [];
@@ -164,11 +154,6 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
-  const UserRole = IDL.Variant({
-    'admin' : IDL.Null,
-    'user' : IDL.Null,
-    'guest' : IDL.Null,
-  });
   const ExternalBlob = IDL.Vec(IDL.Nat8);
   const Time = IDL.Int;
   const CustomOrderRequest = IDL.Record({
@@ -182,6 +167,15 @@ export const idlFactory = ({ IDL }) => {
     'colorPreference' : IDL.Text,
     'budgetRange' : IDL.Text,
   });
+  const CustomerInfo = IDL.Record({
+    'country' : IDL.Text,
+    'city' : IDL.Text,
+    'postalCode' : IDL.Text,
+    'fullName' : IDL.Text,
+    'email' : IDL.Text,
+    'address' : IDL.Text,
+    'phone' : IDL.Text,
+  });
   const OrderItem = IDL.Record({
     'title' : IDL.Text,
     'productId' : IDL.Text,
@@ -190,18 +184,13 @@ export const idlFactory = ({ IDL }) => {
   });
   const Order = IDL.Record({
     'id' : IDL.Text,
-    'customerName' : IDL.Text,
-    'country' : IDL.Text,
-    'orderStatus' : IDL.Text,
-    'city' : IDL.Text,
-    'postalCode' : IDL.Text,
-    'orderDate' : Time,
-    'email' : IDL.Text,
-    'state' : IDL.Text,
-    'shippingAddress' : IDL.Text,
-    'phone' : IDL.Text,
+    'customerInfo' : CustomerInfo,
+    'status' : IDL.Text,
+    'total' : IDL.Nat,
+    'shippingAmount' : IDL.Nat,
+    'createdAt' : Time,
     'items' : IDL.Vec(OrderItem),
-    'totalPrice' : IDL.Nat,
+    'subtotal' : IDL.Nat,
   });
   const Product = IDL.Record({
     'id' : IDL.Text,
@@ -213,7 +202,6 @@ export const idlFactory = ({ IDL }) => {
     'price' : IDL.Nat,
     'bestseller' : IDL.Bool,
   });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text, 'email' : IDL.Text });
   const ReturnRequest = IDL.Record({
     'customerName' : IDL.Text,
     'video' : ExternalBlob,
@@ -256,40 +244,35 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
-    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'addCategory' : IDL.Func([IDL.Text], [], []),
-    'addToWishlist' : IDL.Func([IDL.Text], [], []),
-    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'addCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'addToWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'createCustomOrderRequest' : IDL.Func([CustomOrderRequest], [], []),
     'createOrder' : IDL.Func([Order], [IDL.Text], []),
-    'createProduct' : IDL.Func([Product], [], []),
+    'createProduct' : IDL.Func([IDL.Text, Product], [], []),
     'createReturnRequest' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, ExternalBlob],
         [],
         [],
       ),
-    'deleteProduct' : IDL.Func([IDL.Text], [], []),
-    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
-    'getCustomOrderRequests' : IDL.Func([], [IDL.Vec(CustomOrderRequest)], []),
-    'getOrderById' : IDL.Func([IDL.Text], [Order], ['query']),
-    'getOrders' : IDL.Func([], [IDL.Vec(Order)], []),
-    'getProductById' : IDL.Func([IDL.Text], [Product], ['query']),
-    'getProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
-    'getReturnRequests' : IDL.Func([], [IDL.Vec(ReturnRequest)], []),
-    'getUserProfile' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Opt(UserProfile)],
-        ['query'],
+    'deleteProduct' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'filterProductsByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], []),
+    'getBestSellers' : IDL.Func([], [IDL.Vec(Product)], []),
+    'getCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], []),
+    'getCustomOrderRequests' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(CustomOrderRequest)],
+        [],
       ),
-    'getWishlist' : IDL.Func([], [IDL.Vec(WishlistItem)], ['query']),
-    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'removeCategory' : IDL.Func([IDL.Text], [], []),
-    'removeFromWishlist' : IDL.Func([IDL.Text], [], []),
-    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text], [], []),
-    'updateProduct' : IDL.Func([Product], [], []),
+    'getOrderById' : IDL.Func([IDL.Text], [Order], []),
+    'getOrders' : IDL.Func([IDL.Text], [IDL.Vec(Order)], []),
+    'getProductById' : IDL.Func([IDL.Text], [Product], []),
+    'getProducts' : IDL.Func([], [IDL.Vec(Product)], []),
+    'getReturnRequests' : IDL.Func([IDL.Text], [IDL.Vec(ReturnRequest)], []),
+    'getWishlist' : IDL.Func([IDL.Text], [IDL.Vec(WishlistItem)], []),
+    'removeCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'removeFromWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+    'updateProduct' : IDL.Func([IDL.Text, Product], [], []),
   });
 };
 

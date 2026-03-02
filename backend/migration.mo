@@ -1,67 +1,75 @@
 import Map "mo:core/Map";
-import Time "mo:core/Time";
 import List "mo:core/List";
 import Set "mo:core/Set";
 import Text "mo:core/Text";
 import Storage "blob-storage/Storage";
+import Time "mo:core/Time";
 
 module {
-  type OldProduct = {
+  type OldReturnRequest = {
     id : Text;
-    title : Text;
+    orderId : Text;
+    email : Text;
+    reason : Text;
     description : Text;
-    price : Nat;
-    image : Storage.ExternalBlob;
-    category : Text;
-    bestseller : Bool;
     createdAt : Time.Time;
   };
 
-  type OldOrderItem = {
-    productId : Text;
-    title : Text;
-    quantity : Nat;
-    price : Nat;
+  type OldActor = {
+    products : Map.Map<Text, {
+      id : Text;
+      title : Text;
+      description : Text;
+      price : Nat;
+      image : Storage.ExternalBlob;
+      category : Text;
+      bestseller : Bool;
+      createdAt : Time.Time;
+    }>;
+    orders : Map.Map<Text, {
+      id : Text;
+      customerInfo : {
+        fullName : Text;
+        email : Text;
+        phone : Text;
+        address : Text;
+        city : Text;
+        postalCode : Text;
+        country : Text;
+      };
+      items : [{
+        productId : Text;
+        title : Text;
+        quantity : Nat;
+        price : Nat;
+      }];
+      subtotal : Nat;
+      shippingAmount : Nat;
+      total : Nat;
+      status : Text;
+      createdAt : Time.Time;
+    }>;
+    customOrderRequests : Map.Map<Text, {
+      id : Text;
+      productType : Text;
+      colorPreference : Text;
+      size : Text;
+      description : Text;
+      inspirationImage : Storage.ExternalBlob;
+      budgetRange : Text;
+      email : Text;
+      createdAt : Time.Time;
+    }>;
+    returnRequests : Map.Map<Text, OldReturnRequest>;
+    wishlist : Map.Map<Text, List.List<{
+      email : Text;
+      productId : Text;
+      addedAt : Time.Time;
+    }>>;
+    categories : Set.Set<Text>;
   };
 
-  type OldOrder = {
-    id : Text;
-    customerInfo : OldCustomerInfo;
-    items : [OldOrderItem];
-    subtotal : Nat;
-    shippingAmount : Nat;
-    total : Nat;
-    status : Text;
-    createdAt : Time.Time;
-  };
-
-  type OldCustomerInfo = {
-    fullName : Text;
-    email : Text;
-    phone : Text;
-    address : Text;
-    city : Text;
-    postalCode : Text;
-    country : Text;
-  };
-
-  type NewOrder = {
-    id : Text;
-    customerName : Text;
-    email : Text;
-    phone : Text;
-    shippingAddress : Text;
-    city : Text;
-    state : Text;
-    postalCode : Text;
-    country : Text;
-    items : [OldOrderItem];
-    totalPrice : Nat;
-    orderDate : Time.Time;
-    orderStatus : Text;
-  };
-
-  type ReturnRequest = {
+  type NewReturnRequest = {
     orderNumber : Text;
     customerName : Text;
     email : Text;
@@ -71,66 +79,77 @@ module {
     createdAt : Time.Time;
   };
 
-  type WishlistItem = {
-    email : Text;
-    productId : Text;
-    addedAt : Time.Time;
-  };
-
-  type OldActor = {
-    products : Map.Map<Text, OldProduct>;
-    orders : Map.Map<Text, OldOrder>;
-    returnRequests : Map.Map<Text, ReturnRequest>;
-    wishlist : Map.Map<Text, List.List<WishlistItem>>;
-    categories : Set.Set<Text>;
-    adminPasscode : Text;
-    customOrderRequests : Map.Map<Text, OldCustomOrderRequest>;
-  };
-
-  type OldCustomOrderRequest = {
-    id : Text;
-    productType : Text;
-    colorPreference : Text;
-    size : Text;
-    description : Text;
-    inspirationImage : Storage.ExternalBlob;
-    budgetRange : Text;
-    email : Text;
-    createdAt : Time.Time;
-  };
-
   type NewActor = {
-    products : Map.Map<Text, OldProduct>;
-    orders : Map.Map<Text, NewOrder>;
-    returnRequests : Map.Map<Text, ReturnRequest>;
-    wishlist : Map.Map<Text, List.List<WishlistItem>>;
+    products : Map.Map<Text, {
+      id : Text;
+      title : Text;
+      description : Text;
+      price : Nat;
+      image : Storage.ExternalBlob;
+      category : Text;
+      bestseller : Bool;
+      createdAt : Time.Time;
+    }>;
+    orders : Map.Map<Text, {
+      id : Text;
+      customerInfo : {
+        fullName : Text;
+        email : Text;
+        phone : Text;
+        address : Text;
+        city : Text;
+        postalCode : Text;
+        country : Text;
+      };
+      items : [{
+        productId : Text;
+        title : Text;
+        quantity : Nat;
+        price : Nat;
+      }];
+      subtotal : Nat;
+      shippingAmount : Nat;
+      total : Nat;
+      status : Text;
+      createdAt : Time.Time;
+    }>;
+    customOrderRequests : Map.Map<Text, {
+      id : Text;
+      productType : Text;
+      colorPreference : Text;
+      size : Text;
+      description : Text;
+      inspirationImage : Storage.ExternalBlob;
+      budgetRange : Text;
+      email : Text;
+      createdAt : Time.Time;
+    }>;
+    returnRequests : Map.Map<Text, NewReturnRequest>;
+    wishlist : Map.Map<Text, List.List<{
+      email : Text;
+      productId : Text;
+      addedAt : Time.Time;
+    }>>;
     categories : Set.Set<Text>;
-    customOrderRequests : Map.Map<Text, OldCustomOrderRequest>;
   };
 
   public func run(old : OldActor) : NewActor {
-    let newOrders = old.orders.map<Text, OldOrder, NewOrder>(
-      func(_id, oldOrder) {
+    let newReturnRequests = old.returnRequests.map<Text, OldReturnRequest, NewReturnRequest>(
+      func(_id, oldRequest) {
         {
-          id = oldOrder.id;
-          customerName = oldOrder.customerInfo.fullName;
-          email = oldOrder.customerInfo.email;
-          phone = oldOrder.customerInfo.phone;
-          shippingAddress = oldOrder.customerInfo.address;
-          city = oldOrder.customerInfo.city;
-          state = "";
-          postalCode = oldOrder.customerInfo.postalCode;
-          country = oldOrder.customerInfo.country;
-          items = oldOrder.items;
-          totalPrice = oldOrder.total;
-          orderDate = oldOrder.createdAt;
-          orderStatus = oldOrder.status;
+          orderNumber = oldRequest.id;
+          customerName = "";
+          email = oldRequest.email;
+          reason = oldRequest.reason;
+          message = oldRequest.description;
+          video = ""; // Fix: Assign empty Text value for video field
+          createdAt = oldRequest.createdAt;
         };
       }
     );
     {
       old with
-      orders = newOrders;
+      returnRequests = newReturnRequests
     };
   };
 };

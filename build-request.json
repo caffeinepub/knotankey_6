@@ -1,106 +1,116 @@
 {
   "kind": "build_request",
-  "title": "Full Order Data Capture at Checkout + Admin Orders Detail View",
-  "projectName": "Yarn Boutique",
+  "title": "Returns Page: All Fields Required + Video Upload Validation + Admin Video Review",
+  "projectName": "Knot & Key",
   "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the backend Order type to include all required fields: customerName, email, phone, shippingAddress (street/line1), city, state, postalCode, country, items (product list with quantities), totalPrice, orderDate (timestamp), and orderStatus. Ensure the createOrder function accepts and persists all these fields.",
-      "target": "backend",
+      "text": "Update the Returns Page (/returns) form so that ALL fields are required: Order Number, Customer Name, Email, Reason for Return, Message, and Video Upload. The form must be blocked from submission if any field is empty or no video is uploaded.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-8"
         ],
         "quotes": [
-          "Every order will now capture and persist: Customer Name, Email, Phone Number, Full Shipping Address, City, State, Postal Code, Country, Order Items, Total Price, Order Date, and Order Status."
+          "All form fields must be REQUIRED. The form cannot be submitted if any field is empty.",
+          "Required fields: Order Number, Customer Name, Email, Reason for Return, Message, Upload Video"
         ]
       },
       "acceptanceCriteria": [
-        "The Order type in main.mo includes customerName, email, phone, shippingAddress, city, state, postalCode, country, items, totalPrice, orderDate, and orderStatus fields.",
-        "The createOrder endpoint accepts all these fields and stores them in stable memory.",
-        "Existing orders are not broken; migration handles schema changes if needed."
+        "Submitting the form with any empty field is prevented and does not call the backend.",
+        "All six fields (Order Number, Customer Name, Email, Reason for Return, Message, Video Upload) are marked required.",
+        "Inline per-field error messages appear on attempted submission when a field is empty.",
+        "Error messages match exactly: 'Order number is required.', 'Customer name is required.', 'Email is required.', 'Reason for return is required.', 'Message is required.', 'A product condition video is required to submit a return request.'",
+        "Form submission proceeds only when all six fields pass validation."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update the CheckoutPage form to collect and submit all required order fields: customer name, email, phone number, shipping address (line 1), city, state, postal code, and country. Pass all collected fields when calling the useCreateOrder mutation.",
+      "text": "Add a mandatory video upload section to the Returns Page (/returns) with the section title 'Upload Unboxing / Condition Video' and description 'To process a return request, please upload a video showing the condition of the product.' Video must be MP4, MOV, or WEBM format only, maximum 50MB. Show an inline error 'A product condition video is required to submit a return request.' if no video is selected on submission. Show a file preview (video element) and upload progress bar after a file is selected.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-8"
         ],
         "quotes": [
-          "Every order will now capture and persist: Customer Name, Email, Phone Number, Full Shipping Address, City, State, Postal Code, Country"
+          "Video upload is mandatory",
+          "Allowed formats: MP4, MOV, WEBM",
+          "Maximum size: 50MB",
+          "Show file preview after upload",
+          "Show upload progress",
+          "A product condition video is required to submit a return request."
         ]
       },
       "acceptanceCriteria": [
-        "CheckoutPage form has input fields for name, email, phone, address, city, state, postal code, and country.",
-        "All fields are included in the Order object passed to the createOrder mutation.",
-        "Form validates that required fields are filled before submission."
+        "Section heading reads exactly 'Upload Unboxing / Condition Video'.",
+        "Section description reads exactly 'To process a return request, please upload a video showing the condition of the product.'",
+        "Only MP4, MOV, and WEBM files are accepted; selecting any other format shows a validation error.",
+        "Files larger than 50MB are rejected with an appropriate error message.",
+        "After selecting a valid video file, a video preview element is displayed.",
+        "An upload progress indicator is shown while the video is being prepared/uploaded.",
+        "Attempting to submit without a video shows the error: 'A product condition video is required to submit a return request.'",
+        "No changes are made to existing UI design, colors, layout, or styling."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Update the useCreateOrder and useGetOrders React Query hooks in useQueries.ts to reflect the new Order schema, ensuring all new fields are included in both the mutation payload and the returned data shape.",
-      "target": "frontend",
+      "text": "Update the backend (main.mo) to store return requests with all required fields: Order Number, Customer Name, Email, Reason for Return, Message, and the uploaded video (stored as a Blob/[Nat8] on-chain). Ensure the submitReturnRequest endpoint accepts and persists the video data.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-8"
+        ],
+        "quotes": [
+          "Videos stored on-chain in the canister for persistence",
+          "Admin can play videos inline and download them"
         ]
       },
       "acceptanceCriteria": [
-        "useCreateOrder sends all new order fields to the backend.",
-        "useGetOrders returns orders with all new fields populated.",
-        "TypeScript types for Order are updated to match the new schema."
+        "The ReturnRequest type includes fields for orderNumber, customerName, email, reasonForReturn, message, and videoData (Blob or [Nat8]).",
+        "The submitReturnRequest function accepts all six fields including the video blob.",
+        "Submitted return requests including video data are persisted in stable storage and survive canister upgrades.",
+        "The getReturnRequests function returns all stored return requests including the video data."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Update the AdminOrdersManagement component to display all order fields in the order list: Order ID, Customer Name, Email, Phone Number, Full Shipping Address (street, city, state, postal code, country), Products Ordered (with quantities), Total Amount, Order Status, and Order Date. Each order row/card must be clickable to open a detailed view modal or expanded panel showing the complete order information.",
+      "text": "Update the Admin Panel (/admin) to display submitted return requests showing: Order Number, Customer Name, Email, Message, and the uploaded video. Admin must be able to play the video inline and download it. The existing PIN protection must remain completely untouched.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-8"
         ],
         "quotes": [
-          "Order list shows: Order ID, Customer Name, Email, Phone Number, Full Address, Products Ordered, Total Amount, Order Status, and Date",
-          "Clicking an order opens a detailed view with the complete shipping address and all order info"
+          "Existing PIN protection left completely untouched",
+          "Displays submitted return requests: Order Number, Customer Name, Email, Message, and uploaded video",
+          "Admin can play videos inline and download them",
+          "Videos stored on-chain in the canister for persistence"
         ]
       },
       "acceptanceCriteria": [
-        "Admin Orders list shows Order ID, Customer Name, Email, Phone, Address (all parts), Products with quantities, Total, Status, and Date for each order.",
-        "Clicking an order opens a detail modal or expanded panel.",
-        "The detail view shows the complete shipping address (street, city, state, postal code, country) and all order information.",
-        "No changes to existing UI design, layout, colors, or styling — only new data fields are added."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Generate a migration.mo file to upgrade the existing Order stable state from the old schema to the new schema that includes customerName, email, phone, shippingAddress, city, state, postalCode, country, and all other new fields, preserving all previously stored orders with safe default values for any missing fields.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ]
-      },
-      "acceptanceCriteria": [
-        "migration.mo transforms old Order records to the new schema.",
-        "Existing orders are preserved with empty string defaults for new fields that were not previously captured.",
-        "No data loss occurs during migration."
+        "The Admin Panel at /admin displays all submitted return requests.",
+        "Each return request entry shows: Order Number, Customer Name, Email, Message, and the uploaded video.",
+        "Videos are playable inline within the admin panel using an HTML video element.",
+        "A download button or link is available for each video, allowing the admin to download the video file.",
+        "The existing PIN protection for /admin is not modified in any way.",
+        "No changes are made to existing UI design, colors, layout, or styling."
       ]
     }
   ],
   "constraints": [
-    "Do not change UI design, layout, colors, or styling — only add missing data fields and display them.",
-    "All Motoko logic must remain in the single main actor (backend/main.mo).",
-    "Do not modify files in frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui."
+    "Do not modify authentication, PIN protection, or admin access control in any way.",
+    "Do not change UI design, layout, colors, or styling on any existing page.",
+    "Do not modify routing configuration.",
+    "Immutable frontend paths (useInternetIdentity, useActor, main.tsx, components/ui) must not be edited.",
+    "All Motoko logic must remain in the single main actor (backend/main.mo)."
   ],
   "nonGoals": [
-    "Redesigning or restyling any existing UI components.",
-    "Adding new pages or routes.",
-    "Changing the admin authentication/passcode mechanism.",
-    "Modifying the returns, custom orders, or products management flows."
+    "Changing the visual design, color scheme, or layout of any page.",
+    "Adding or modifying authentication or routing.",
+    "Storing videos externally (must be stored on-chain in the canister).",
+    "Making Message field optional (it is now required per this request).",
+    "Adding any new pages or routes beyond /returns and /admin."
   ],
   "imageRequirements": {
     "required": [],

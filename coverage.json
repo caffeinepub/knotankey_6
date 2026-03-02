@@ -1,83 +1,73 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-02T18:58:17.356Z",
+  "generatedAt": "2026-03-02T18:44:31.818Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
+    "total": 4,
     "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the backend Order type to include all required fields: customerName, email, phone, shippingAddress (street/line1), city, state, postalCode, country, items (product list with quantities), totalPrice, orderDate (timestamp), and orderStatus. Ensure the createOrder function accepts and persists all these fields.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "Update the Returns Page (/returns) form so that ALL fields are required: Order Number, Customer Name, Email, Reason for Return, Message, and Video Upload. The form must be blocked from submission if any field is empty or no video is uploaded.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/ReturnsPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/ReturnsPage.tsx"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Update the CheckoutPage form to collect and submit all required order fields: customer name, email, phone number, shipping address (line 1), city, state, postal code, and country. Pass all collected fields when calling the useCreateOrder mutation.",
+        "summary": "Add a mandatory video upload section to the Returns Page (/returns) with the section title 'Upload Unboxing / Condition Video' and description 'To process a return request, please upload a video showing the condition of the product.' Video must be MP4, MOV, or WEBM format only, maximum 50MB. Show an inline error 'A product condition video is required to submit a return request.' if no video is selected on submission. Show a file preview (video element) and upload progress bar after a file is selected.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/CheckoutPage.tsx"
+          "frontend/src/pages/ReturnsPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/CheckoutPage.tsx"
+          "frontend/src/pages/ReturnsPage.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Update the useCreateOrder and useGetOrders React Query hooks in useQueries.ts to reflect the new Order schema, ensuring all new fields are included in both the mutation payload and the returned data shape.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Update the AdminOrdersManagement component to display all order fields in the order list: Order ID, Customer Name, Email, Phone Number, Full Shipping Address (street, city, state, postal code, country), Products Ordered (with quantities), Total Amount, Order Status, and Order Date. Each order row/card must be clickable to open a detailed view modal or expanded panel showing the complete order information.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/admin/AdminOrdersManagement.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/admin/AdminOrdersManagement.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Generate a migration.mo file to upgrade the existing Order stable state from the old schema to the new schema that includes customerName, email, phone, shippingAddress, city, state, postalCode, country, and all other new fields, preserving all previously stored orders with safe default values for any missing fields.",
+        "summary": "Update the backend (main.mo) to store return requests with all required fields: Order Number, Customer Name, Email, Reason for Return, Message, and the uploaded video (stored as a Blob/[Nat8] on-chain). Ensure the submitReturnRequest endpoint accepts and persists the video data.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Update the Admin Panel (/admin) to display submitted return requests showing: Order Number, Customer Name, Email, Message, and the uploaded video. Admin must be able to play the video inline and download it. The existing PIN protection must remain completely untouched.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/admin/AdminReturnRequestsViewer.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/admin/AdminReturnRequestsViewer.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
       }
     ]
   },
   "changedFiles": [
-    "backend/authorization/MixinAuthorization.mo",
-    "backend/authorization/access-control.mo",
     "backend/main.mo",
     "backend/migration.mo",
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
-    "frontend/src/components/admin/AdminOrdersManagement.tsx",
+    "frontend/src/components/admin/AdminReturnRequestsViewer.tsx",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/CheckoutPage.tsx",
-    "frontend/src/utils/urlParams.ts",
+    "frontend/src/pages/ReturnsPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -21,21 +21,25 @@ export interface CustomOrderRequest {
   'colorPreference' : string,
   'budgetRange' : string,
 }
+export interface CustomerInfo {
+  'country' : string,
+  'city' : string,
+  'postalCode' : string,
+  'fullName' : string,
+  'email' : string,
+  'address' : string,
+  'phone' : string,
+}
 export type ExternalBlob = Uint8Array;
 export interface Order {
   'id' : string,
-  'customerName' : string,
-  'country' : string,
-  'orderStatus' : string,
-  'city' : string,
-  'postalCode' : string,
-  'orderDate' : Time,
-  'email' : string,
-  'state' : string,
-  'shippingAddress' : string,
-  'phone' : string,
+  'customerInfo' : CustomerInfo,
+  'status' : string,
+  'total' : bigint,
+  'shippingAmount' : bigint,
+  'createdAt' : Time,
   'items' : Array<OrderItem>,
-  'totalPrice' : bigint,
+  'subtotal' : bigint,
 }
 export interface OrderItem {
   'title' : string,
@@ -63,10 +67,6 @@ export interface ReturnRequest {
   'reason' : string,
 }
 export type Time = bigint;
-export interface UserProfile { 'name' : string, 'email' : string }
-export type UserRole = { 'admin' : null } |
-  { 'user' : null } |
-  { 'guest' : null };
 export interface WishlistItem {
   'productId' : string,
   'email' : string,
@@ -99,35 +99,30 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
-  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'addCategory' : ActorMethod<[string], undefined>,
-  'addToWishlist' : ActorMethod<[string], undefined>,
-  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'addCategory' : ActorMethod<[string, string], undefined>,
+  'addToWishlist' : ActorMethod<[string, string], undefined>,
   'createCustomOrderRequest' : ActorMethod<[CustomOrderRequest], undefined>,
   'createOrder' : ActorMethod<[Order], string>,
-  'createProduct' : ActorMethod<[Product], undefined>,
+  'createProduct' : ActorMethod<[string, Product], undefined>,
   'createReturnRequest' : ActorMethod<
     [string, string, string, string, string, ExternalBlob],
     undefined
   >,
-  'deleteProduct' : ActorMethod<[string], undefined>,
-  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
-  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'deleteProduct' : ActorMethod<[string, string], undefined>,
+  'filterProductsByCategory' : ActorMethod<[string], Array<Product>>,
+  'getBestSellers' : ActorMethod<[], Array<Product>>,
   'getCategories' : ActorMethod<[], Array<string>>,
-  'getCustomOrderRequests' : ActorMethod<[], Array<CustomOrderRequest>>,
+  'getCustomOrderRequests' : ActorMethod<[string], Array<CustomOrderRequest>>,
   'getOrderById' : ActorMethod<[string], Order>,
-  'getOrders' : ActorMethod<[], Array<Order>>,
+  'getOrders' : ActorMethod<[string], Array<Order>>,
   'getProductById' : ActorMethod<[string], Product>,
   'getProducts' : ActorMethod<[], Array<Product>>,
-  'getReturnRequests' : ActorMethod<[], Array<ReturnRequest>>,
-  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'getWishlist' : ActorMethod<[], Array<WishlistItem>>,
-  'isCallerAdmin' : ActorMethod<[], boolean>,
-  'removeCategory' : ActorMethod<[string], undefined>,
-  'removeFromWishlist' : ActorMethod<[string], undefined>,
-  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'updateOrderStatus' : ActorMethod<[string, string], undefined>,
-  'updateProduct' : ActorMethod<[Product], undefined>,
+  'getReturnRequests' : ActorMethod<[string], Array<ReturnRequest>>,
+  'getWishlist' : ActorMethod<[string], Array<WishlistItem>>,
+  'removeCategory' : ActorMethod<[string, string], undefined>,
+  'removeFromWishlist' : ActorMethod<[string, string], undefined>,
+  'updateOrderStatus' : ActorMethod<[string, string, string], undefined>,
+  'updateProduct' : ActorMethod<[string, Product], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
