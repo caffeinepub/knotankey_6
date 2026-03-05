@@ -1,0 +1,68 @@
+import { useCart } from "../../context/CartContext";
+import { formatINR } from "../../utils/currency";
+import { calculateShipping } from "../../utils/shipping";
+
+export default function OrderSummary() {
+  const { items, total } = useCart();
+
+  const shippingCost = calculateShipping(total);
+  const grandTotal = total + shippingCost;
+
+  return (
+    <div className="bg-cream-200 rounded-3xl p-6 border border-cream-300">
+      <h3 className="font-serif text-xl text-warm-brown mb-5">Order Summary</h3>
+
+      <div className="space-y-4 mb-5">
+        {items.map((item) => (
+          <div key={item.productId} className="flex gap-3">
+            <div className="w-14 h-14 rounded-xl overflow-hidden bg-cream-300 shrink-0">
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-sans text-sm text-warm-brown truncate">
+                {item.title}
+              </p>
+              <p className="font-sans text-xs text-warm-tan">
+                Qty: {item.quantity}
+              </p>
+            </div>
+            <span className="font-sans text-sm text-warm-brown font-medium whitespace-nowrap">
+              {formatINR(item.price * item.quantity)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t border-cream-300 pt-4 space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="font-sans text-warm-tan">Subtotal</span>
+          <span className="font-sans text-warm-brown">{formatINR(total)}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="font-sans text-warm-tan">Shipping</span>
+          {shippingCost === 0 ? (
+            <span className="font-sans text-warm-brown font-medium">
+              FREE SHIPPING
+            </span>
+          ) : (
+            <span className="font-sans text-warm-brown">
+              {formatINR(shippingCost)}
+            </span>
+          )}
+        </div>
+        <div className="border-t border-cream-300 pt-3 flex justify-between">
+          <span className="font-sans text-sm uppercase tracking-wider text-warm-tan">
+            Total
+          </span>
+          <span className="font-serif text-2xl text-warm-brown">
+            {formatINR(grandTotal)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
