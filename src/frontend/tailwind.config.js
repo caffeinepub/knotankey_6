@@ -116,11 +116,61 @@ export default {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' }
-        }
+        },
+        'yarn-spin': {
+          '0%': { transform: 'rotate(0deg) scale(1)' },
+          '50%': { transform: 'rotate(180deg) scale(1.05)' },
+          '100%': { transform: 'rotate(360deg) scale(1)' },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+          '33%': { transform: 'translateY(-18px) rotate(3deg)' },
+          '66%': { transform: 'translateY(-8px) rotate(-2deg)' },
+        },
+        'float-slow': {
+          '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
+          '25%': { transform: 'translateY(-12px) translateX(8px)' },
+          '50%': { transform: 'translateY(-20px) translateX(-4px)' },
+          '75%': { transform: 'translateY(-8px) translateX(12px)' },
+        },
+        'spin-slow': {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
+        'fade-up': {
+          from: { opacity: '0', transform: 'translateY(24px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        'scale-in': {
+          from: { opacity: '0', transform: 'scale(0.95)' },
+          to: { opacity: '1', transform: 'scale(1)' },
+        },
+        'slide-in-right': {
+          from: { transform: 'translateX(100%)', opacity: '0' },
+          to: { transform: 'translateX(0)', opacity: '1' },
+        },
+        'cart-bounce': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '30%': { transform: 'scale(1.3)' },
+          '60%': { transform: 'scale(0.9)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'yarn-spin': 'yarn-spin 2s ease-in-out infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'float-slow': 'float-slow 8s ease-in-out infinite',
+        'spin-slow': 'spin-slow 3s linear infinite',
+        'fade-up': 'fade-up 0.7s ease-out forwards',
+        'fade-in': 'fade-in 0.6s ease-out forwards',
+        'scale-in': 'scale-in 0.5s ease-out forwards',
+        'slide-in-right': 'slide-in-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'cart-bounce': 'cart-bounce 0.4s ease-out',
       }
     }
   },
