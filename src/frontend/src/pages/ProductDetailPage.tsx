@@ -1,8 +1,10 @@
+import ProductStructuredData from "@/components/StructuredData";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCart } from "@/context/CartContext";
 import { useGetProductById } from "@/hooks/useQueries";
+import { useSEO } from "@/hooks/useSEO";
 import { formatINR } from "@/utils/currency";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { ArrowLeft, Minus, Plus, ShoppingCart, Star, Zap } from "lucide-react";
@@ -16,6 +18,14 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
 
   const { data: product, isLoading, isError } = useGetProductById(id);
+
+  useSEO({
+    title: product?.title,
+    description: product?.description,
+    image: product ? product.image.getDirectURL() : undefined,
+    url: `/products/${id}`,
+    type: "product",
+  });
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -90,6 +100,15 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">
+      {product && (
+        <ProductStructuredData
+          name={product.title}
+          description={product.description}
+          image={imageUrl}
+          price={Number(product.price)}
+          url={`https://knotankey-6kt.caffeine.xyz/products/${id}`}
+        />
+      )}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <button
@@ -107,7 +126,7 @@ export default function ProductDetailPage() {
             <div className="aspect-square rounded-2xl overflow-hidden bg-secondary/20">
               <img
                 src={imageUrl}
-                alt={product.title}
+                alt={`Handmade crochet ${product.title} by Knotankey`}
                 className="w-full h-full object-cover"
               />
             </div>

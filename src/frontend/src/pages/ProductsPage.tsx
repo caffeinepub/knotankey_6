@@ -11,10 +11,18 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetProducts } from "@/hooks/useQueries";
+import { useSEO } from "@/hooks/useSEO";
 import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export default function ProductsPage() {
+  useSEO({
+    title: "All Products",
+    description:
+      "Browse all handmade crochet products by Knotankey — keychains, bags, plushies, wearables and more. Free shipping on orders over ₹2999.",
+    url: "/products",
+  });
+
   const { data: products, isLoading, isError } = useGetProducts();
 
   const [searchQuery, setSearchQuery] = useState("");

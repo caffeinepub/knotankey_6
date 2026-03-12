@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://knotankey-6kt.caffeine.xyz/sitemap.xml

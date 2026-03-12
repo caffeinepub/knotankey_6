@@ -39,7 +39,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="img-zoom-container aspect-square bg-cream-200 relative overflow-hidden">
           <img
             src={imageUrl}
-            alt={product.title}
+            alt={`Handmade crochet ${product.title} by Knotankey`}
             className="w-full h-full object-cover"
             loading="lazy"
           />

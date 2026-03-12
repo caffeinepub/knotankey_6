@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateCustomOrder } from "@/hooks/useQueries";
+import { useSEO } from "@/hooks/useSEO";
 import { CheckCircle, Loader2, Sparkles, Upload, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -37,6 +38,13 @@ const BUDGET_RANGES = [
 const SIZE_OPTIONS = ["XS", "S", "M", "L", "XL", "Custom / Not Applicable"];
 
 export default function CustomOrderPage() {
+  useSEO({
+    title: "Custom Order",
+    description:
+      "Request a custom handmade crochet piece from Knotankey. Tell us your vision and we will bring it to life.",
+    url: "/custom-order",
+  });
+
   const createCustomOrderMutation = useCreateCustomOrder();
   const [submitted, setSubmitted] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
