@@ -85,7 +85,8 @@ export default function ProductDetailPage() {
             Product Not Found
           </h2>
           <p className="text-muted-foreground mb-6">
-            The product you're looking for doesn't exist or has been removed.
+            The product you&apos;re looking for doesn&apos;t exist or has been
+            removed.
           </p>
           <Button onClick={() => navigate({ to: "/products" })}>
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -97,18 +98,21 @@ export default function ProductDetailPage() {
   }
 
   const imageUrl = product.image.getDirectURL();
+  const productPageUrl = `https://knotankey-6kt.caffeine.xyz/products/${id}`;
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">
-      {product && (
-        <ProductStructuredData
-          name={product.title}
-          description={product.description}
-          image={imageUrl}
-          price={Number(product.price)}
-          url={`https://knotankey-6kt.caffeine.xyz/products/${id}`}
-        />
-      )}
+      {/* Schema.org Product structured data for SEO */}
+      <ProductStructuredData
+        name={product.title}
+        description={product.description}
+        images={[imageUrl]}
+        price={Number(product.price)}
+        url={productPageUrl}
+        sku={product.id}
+        availability={"InStock"}
+      />
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <button
@@ -212,7 +216,7 @@ export default function ProductDetailPage() {
                   Handcrafted with love.
                 </strong>{" "}
                 Each piece is made to order and may have slight variations —
-                that's what makes it uniquely yours.
+                that&apos;s what makes it uniquely yours.
               </p>
             </div>
           </div>
