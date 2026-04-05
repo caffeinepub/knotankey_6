@@ -96,7 +96,9 @@ export default function Footer() {
                   <SiPinterest size={16} className="text-footer-foreground" />
                 </a>
                 <a
-                  href="mailto:knotankey@gmail.com"
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=knotankey20@gmail.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-footer-icon flex items-center justify-center hover:bg-footer-icon-hover transition-colors"
                   aria-label="Email"
                 >
@@ -156,10 +158,12 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    href="mailto:knotankey@gmail.com"
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=knotankey20@gmail.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="hover:text-footer-heading transition-colors"
                   >
-                    knotankey@gmail.com
+                    knotankey20@gmail.com
                   </a>
                 </li>
               </ul>

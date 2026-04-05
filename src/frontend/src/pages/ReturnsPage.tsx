@@ -24,7 +24,7 @@ const POLICY_CARDS = [
     icon: Mail,
     title: "Contact Us First",
     description:
-      "Please email us at knotankey@gmail.com to request a return. Include your Order Number, Customer Name, and Reason for Return.",
+      "Please email us at knotankey20@gmail.com to request a return. Include your Order Number, Customer Name, and Reason for Return.",
   },
 ];
 
@@ -32,7 +32,7 @@ export default function ReturnsPage() {
   useSEO({
     title: "Returns & Exchanges",
     description:
-      "Learn about the Knotankey returns policy. Returns accepted within 7 days of delivery. Contact us at knotankey@gmail.com.",
+      "Learn about the Knotankey returns policy. Returns accepted within 7 days of delivery. Contact us at knotankey20@gmail.com.",
     url: "/returns",
   });
 
@@ -92,10 +92,12 @@ export default function ReturnsPage() {
           <div className="flex items-center gap-2 mb-6">
             <Mail className="w-5 h-5 text-primary shrink-0" />
             <a
-              href="mailto:knotankey@gmail.com"
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=knotankey20@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-primary hover:underline font-medium text-base"
             >
-              knotankey@gmail.com
+              knotankey20@gmail.com
             </a>
           </div>
 
@@ -125,10 +127,12 @@ export default function ReturnsPage() {
         <p className="text-center text-sm text-muted-foreground mt-8">
           Questions? Email us at{" "}
           <a
-            href="mailto:knotankey@gmail.com"
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=knotankey20@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-primary hover:underline font-medium"
           >
-            knotankey@gmail.com
+            knotankey20@gmail.com
           </a>
         </p>
       </div>
