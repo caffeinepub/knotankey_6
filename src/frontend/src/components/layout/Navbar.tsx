@@ -23,6 +23,7 @@ export default function Navbar({ onCartClick }: NavbarProps) {
     { to: "/", label: "Home" },
     { to: "/products", label: "Products" },
     { to: "/custom-order", label: "Custom Order" },
+    { to: "/reviews", label: "Reviews" },
     { to: "/returns", label: "Returns" },
   ];
 

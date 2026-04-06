@@ -20,7 +20,9 @@ import HomePage from "./pages/HomePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import ProductsPage from "./pages/ProductsPage";
 import ReturnsPage from "./pages/ReturnsPage";
+import SubmitReviewPage from "./pages/SubmitReviewPage";
 import ThankYouPage from "./pages/ThankYouPage";
+import ViewReviewsPage from "./pages/ViewReviewsPage";
 
 function Layout() {
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
@@ -90,6 +92,16 @@ const adminRoute = createRoute({
   path: "/admin",
   component: AdminPage,
 });
+const reviewsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/reviews",
+  component: ViewReviewsPage,
+});
+const submitReviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/reviews/submit",
+  component: SubmitReviewPage,
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -101,6 +113,8 @@ const routeTree = rootRoute.addChildren([
   customOrderRoute,
   returnsRoute,
   adminRoute,
+  reviewsRoute,
+  submitReviewRoute,
 ]);
 
 const router = createRouter({ routeTree });

@@ -1,6 +1,7 @@
 import AdminCustomOrdersViewer from "@/components/admin/AdminCustomOrdersViewer";
 import AdminOrdersManagement from "@/components/admin/AdminOrdersManagement";
 import AdminProductsManagement from "@/components/admin/AdminProductsManagement";
+import AdminReviewsManagement from "@/components/admin/AdminReviewsManagement";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -97,6 +98,7 @@ export default function AdminPage() {
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="custom-orders">Custom Orders</TabsTrigger>
+            <TabsTrigger value="reviews">Reviews</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products">
@@ -109,6 +111,10 @@ export default function AdminPage() {
 
           <TabsContent value="custom-orders">
             <AdminCustomOrdersViewer passcode={ADMIN_PASSCODE} />
+          </TabsContent>
+
+          <TabsContent value="reviews">
+            <AdminReviewsManagement passcode={ADMIN_PASSCODE} />
           </TabsContent>
         </Tabs>
       </div>

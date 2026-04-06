@@ -1,15 +1,58 @@
+import type { Review } from "@/backend";
 import ProductStructuredData from "@/components/StructuredData";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCart } from "@/context/CartContext";
-import { useGetProductById } from "@/hooks/useQueries";
+import {
+  useGetApprovedReviewsByProduct,
+  useGetProductById,
+} from "@/hooks/useQueries";
 import { useSEO } from "@/hooks/useSEO";
 import { formatINR } from "@/utils/currency";
-import { useNavigate, useParams } from "@tanstack/react-router";
-import { ArrowLeft, Minus, Plus, ShoppingCart, Star, Zap } from "lucide-react";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
+import {
+  ArrowLeft,
+  Minus,
+  PenLine,
+  Plus,
+  ShoppingCart,
+  Star,
+  Zap,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+
+const formatDate = (nanoseconds: bigint) =>
+  new Date(Number(nanoseconds / BigInt(1_000_000))).toLocaleDateString(
+    "en-IN",
+    { year: "numeric", month: "long", day: "numeric" },
+  );
+
+const hasImage = (review: Review) => {
+  try {
+    return review.image.getDirectURL().length > 0;
+  } catch {
+    return false;
+  }
+};
+
+function StarDisplay({ rating }: { rating: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <Star
+          key={s}
+          className={`w-4 h-4 ${
+            s <= rating
+              ? "fill-amber-400 text-amber-400"
+              : "text-muted-foreground"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function ProductDetailPage() {
   const { id } = useParams({ from: "/products/$id" });
@@ -18,6 +61,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
 
   const { data: product, isLoading, isError } = useGetProductById(id);
+  const { data: reviews } = useGetApprovedReviewsByProduct(id);
 
   useSEO({
     title: product?.title,
@@ -100,6 +144,16 @@ export default function ProductDetailPage() {
   const imageUrl = product.image.getDirectURL();
   const productPageUrl = `https://knotankey-6kt.caffeine.xyz/products/${id}`;
 
+  // Review summary
+  const reviewList = reviews ?? [];
+  const avgRating =
+    reviewList.length > 0
+      ? (
+          reviewList.reduce((sum, r) => sum + Number(r.rating), 0) /
+          reviewList.length
+        ).toFixed(1)
+      : null;
+
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">
       {/* Schema.org Product structured data for SEO */}
@@ -157,9 +211,21 @@ export default function ProductDetailPage() {
               {product.title}
             </h1>
 
-            <p className="text-3xl font-bold text-primary mb-6">
+            <p className="text-3xl font-bold text-primary mb-1">
               {formatINR(Number(product.price))}
             </p>
+
+            {/* Review summary below price */}
+            {avgRating && (
+              <div className="flex items-center gap-1.5 mb-6">
+                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                <span className="text-sm text-muted-foreground">
+                  {avgRating} ({reviewList.length} review
+                  {reviewList.length !== 1 ? "s" : ""})
+                </span>
+              </div>
+            )}
+            {!avgRating && <div className="mb-6" />}
 
             <p className="text-muted-foreground leading-relaxed mb-8">
               {product.description}
@@ -220,6 +286,70 @@ export default function ProductDetailPage() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* ── Customer Reviews Section ── */}
+        <div className="mt-16">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold font-serif text-foreground">
+              Customer Reviews
+            </h2>
+            <Link
+              to="/reviews/submit"
+              search={{ productId: id }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warm-brown text-cream-50 font-sans text-xs tracking-wider uppercase transition-all duration-300 btn-luxury hover:bg-warm-tan"
+              data-ocid="product.primary_button"
+            >
+              <PenLine className="w-3.5 h-3.5" />
+              Write a Review
+            </Link>
+          </div>
+
+          {reviewList.length === 0 ? (
+            <div
+              className="text-center py-10 text-muted-foreground bg-secondary/20 rounded-2xl border border-border"
+              data-ocid="product.empty_state"
+            >
+              <p className="mb-1">No reviews yet for this product.</p>
+              <p className="text-sm">Be the first to share your experience!</p>
+            </div>
+          ) : (
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+              data-ocid="product.list"
+            >
+              {reviewList.slice(0, 10).map((review, idx) => (
+                <div
+                  key={review.id}
+                  className="bg-card border border-border rounded-2xl p-5 shadow-soft"
+                  data-ocid={`product.item.${idx + 1}`}
+                >
+                  <div className="flex items-start justify-between gap-2 flex-wrap mb-2">
+                    <span className="font-semibold text-foreground text-sm">
+                      {review.name}
+                    </span>
+                    <div className="flex flex-col items-end gap-0.5">
+                      <StarDisplay rating={Number(review.rating)} />
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(review.createdAt)}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {review.message}
+                  </p>
+                  {hasImage(review) && (
+                    <img
+                      src={review.image.getDirectURL()}
+                      alt={`Review by ${review.name}`}
+                      loading="lazy"
+                      className="mt-3 w-full max-h-40 object-cover rounded-xl border border-border"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

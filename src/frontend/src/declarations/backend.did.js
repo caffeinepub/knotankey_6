@@ -67,6 +67,20 @@ export const Product = IDL.Record({
   'price' : IDL.Nat,
   'bestseller' : IDL.Bool,
 });
+export const Review = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'name' : IDL.Text,
+  'createdAt' : Time,
+  'productId' : IDL.Text,
+  'productName' : IDL.Text,
+  'email' : IDL.Text,
+  'message' : IDL.Text,
+  'category' : IDL.Text,
+  'rating' : IDL.Nat,
+  'image' : ExternalBlob,
+  'orderNumber' : IDL.Text,
+});
 export const ReturnRequest = IDL.Record({
   'customerName' : IDL.Text,
   'video' : ExternalBlob,
@@ -111,6 +125,7 @@ export const idlService = IDL.Service({
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   'addCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'addToWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'approveReview' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'createCustomOrderRequest' : IDL.Func([CustomOrderRequest], [], []),
   'createOrder' : IDL.Func([Order], [IDL.Text], []),
   'createProduct' : IDL.Func([IDL.Text, Product], [], []),
@@ -120,7 +135,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'deleteProduct' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'deleteReview' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'filterProductsByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], []),
+  'getAllReviews' : IDL.Func([IDL.Text], [IDL.Vec(Review)], []),
+  'getApprovedReviews' : IDL.Func([], [IDL.Vec(Review)], []),
+  'getApprovedReviewsByProduct' : IDL.Func([IDL.Text], [IDL.Vec(Review)], []),
   'getBestSellers' : IDL.Func([], [IDL.Vec(Product)], []),
   'getCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], []),
   'getCustomOrderRequests' : IDL.Func(
@@ -134,10 +153,13 @@ export const idlService = IDL.Service({
   'getProducts' : IDL.Func([], [IDL.Vec(Product)], []),
   'getReturnRequests' : IDL.Func([IDL.Text], [IDL.Vec(ReturnRequest)], []),
   'getWishlist' : IDL.Func([IDL.Text], [IDL.Vec(WishlistItem)], []),
+  'rejectReview' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'removeCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'removeFromWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'submitReview' : IDL.Func([Review], [], []),
   'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'updateProduct' : IDL.Func([IDL.Text, Product], [], []),
+  'updateReview' : IDL.Func([IDL.Text, Review], [], []),
 });
 
 export const idlInitArgs = [];
@@ -202,6 +224,20 @@ export const idlFactory = ({ IDL }) => {
     'price' : IDL.Nat,
     'bestseller' : IDL.Bool,
   });
+  const Review = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'name' : IDL.Text,
+    'createdAt' : Time,
+    'productId' : IDL.Text,
+    'productName' : IDL.Text,
+    'email' : IDL.Text,
+    'message' : IDL.Text,
+    'category' : IDL.Text,
+    'rating' : IDL.Nat,
+    'image' : ExternalBlob,
+    'orderNumber' : IDL.Text,
+  });
   const ReturnRequest = IDL.Record({
     'customerName' : IDL.Text,
     'video' : ExternalBlob,
@@ -246,6 +282,7 @@ export const idlFactory = ({ IDL }) => {
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     'addCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'addToWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'approveReview' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'createCustomOrderRequest' : IDL.Func([CustomOrderRequest], [], []),
     'createOrder' : IDL.Func([Order], [IDL.Text], []),
     'createProduct' : IDL.Func([IDL.Text, Product], [], []),
@@ -255,7 +292,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'deleteProduct' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'deleteReview' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'filterProductsByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], []),
+    'getAllReviews' : IDL.Func([IDL.Text], [IDL.Vec(Review)], []),
+    'getApprovedReviews' : IDL.Func([], [IDL.Vec(Review)], []),
+    'getApprovedReviewsByProduct' : IDL.Func([IDL.Text], [IDL.Vec(Review)], []),
     'getBestSellers' : IDL.Func([], [IDL.Vec(Product)], []),
     'getCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], []),
     'getCustomOrderRequests' : IDL.Func(
@@ -269,10 +310,13 @@ export const idlFactory = ({ IDL }) => {
     'getProducts' : IDL.Func([], [IDL.Vec(Product)], []),
     'getReturnRequests' : IDL.Func([IDL.Text], [IDL.Vec(ReturnRequest)], []),
     'getWishlist' : IDL.Func([IDL.Text], [IDL.Vec(WishlistItem)], []),
+    'rejectReview' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'removeCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'removeFromWishlist' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'submitReview' : IDL.Func([Review], [], []),
     'updateOrderStatus' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'updateProduct' : IDL.Func([IDL.Text, Product], [], []),
+    'updateReview' : IDL.Func([IDL.Text, Review], [], []),
   });
 };
 

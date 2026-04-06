@@ -14,6 +14,16 @@ export class ExternalBlob {
     static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
     withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
 }
+export interface Product {
+    id: string;
+    title: string;
+    createdAt: Time;
+    description: string;
+    category: string;
+    image: ExternalBlob;
+    price: bigint;
+    bestseller: boolean;
+}
 export interface CustomerInfo {
     country: string;
     city: string;
@@ -65,25 +75,34 @@ export interface Order {
     items: Array<OrderItem>;
     subtotal: bigint;
 }
-export interface Product {
+export interface Review {
     id: string;
-    title: string;
+    status: string;
+    name: string;
     createdAt: Time;
-    description: string;
+    productId: string;
+    productName: string;
+    email: string;
+    message: string;
     category: string;
+    rating: bigint;
     image: ExternalBlob;
-    price: bigint;
-    bestseller: boolean;
+    orderNumber: string;
 }
 export interface backendInterface {
     addCategory(passcode: string, category: string): Promise<void>;
     addToWishlist(email: string, productId: string): Promise<void>;
+    approveReview(passcode: string, id: string): Promise<void>;
     createCustomOrderRequest(request: CustomOrderRequest): Promise<void>;
     createOrder(order: Order): Promise<string>;
     createProduct(passcode: string, product: Product): Promise<void>;
     createReturnRequest(orderNumber: string, customerName: string, email: string, reason: string, message: string, video: ExternalBlob): Promise<void>;
     deleteProduct(passcode: string, productId: string): Promise<void>;
+    deleteReview(passcode: string, id: string): Promise<void>;
     filterProductsByCategory(category: string): Promise<Array<Product>>;
+    getAllReviews(passcode: string): Promise<Array<Review>>;
+    getApprovedReviews(): Promise<Array<Review>>;
+    getApprovedReviewsByProduct(productId: string): Promise<Array<Review>>;
     getBestSellers(): Promise<Array<Product>>;
     getCategories(): Promise<Array<string>>;
     getCustomOrderRequests(passcode: string): Promise<Array<CustomOrderRequest>>;
@@ -93,8 +112,11 @@ export interface backendInterface {
     getProducts(): Promise<Array<Product>>;
     getReturnRequests(passcode: string): Promise<Array<ReturnRequest>>;
     getWishlist(email: string): Promise<Array<WishlistItem>>;
+    rejectReview(passcode: string, id: string): Promise<void>;
     removeCategory(passcode: string, category: string): Promise<void>;
     removeFromWishlist(email: string, productId: string): Promise<void>;
+    submitReview(review: Review): Promise<void>;
     updateOrderStatus(passcode: string, orderId: string, status: string): Promise<void>;
     updateProduct(passcode: string, product: Product): Promise<void>;
+    updateReview(passcode: string, review: Review): Promise<void>;
 }

@@ -5,6 +5,7 @@ import type {
   Order,
   Product,
   ReturnRequest,
+  Review,
 } from "../backend";
 import { useActor } from "./useActor";
 
@@ -286,6 +287,140 @@ export function useCreateReturnRequest() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["returnRequests"],
+        exact: false,
+      });
+    },
+  });
+}
+
+// ─── Reviews ─────────────────────────────────────────────────────────────────
+
+export function useGetApprovedReviews() {
+  const { actor, isFetching } = useActor();
+  return useQuery<Review[]>({
+    queryKey: ["approvedReviews"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getApprovedReviews();
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 1000 * 60,
+  });
+}
+
+export function useGetApprovedReviewsByProduct(productId: string) {
+  const { actor, isFetching } = useActor();
+  return useQuery<Review[]>({
+    queryKey: ["approvedReviews", productId],
+    queryFn: async () => {
+      if (!actor || !productId) return [];
+      return actor.getApprovedReviewsByProduct(productId);
+    },
+    enabled: !!actor && !isFetching && !!productId,
+    staleTime: 1000 * 60,
+  });
+}
+
+export function useGetAllReviews(passcode: string) {
+  const { actor, isFetching } = useActor();
+  return useQuery<Review[]>({
+    queryKey: ["allReviews", passcode],
+    queryFn: async () => {
+      if (!actor || !passcode) return [];
+      return actor.getAllReviews(passcode);
+    },
+    enabled: !!actor && !isFetching && !!passcode,
+    staleTime: 1000 * 30,
+    refetchOnMount: "always",
+  });
+}
+
+export function useSubmitReview() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (review: Review) => {
+      if (!actor) throw new Error("Actor not initialized");
+      return actor.submitReview(review);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["approvedReviews"],
+        exact: false,
+      });
+    },
+  });
+}
+
+export function useApproveReview() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ passcode, id }: { passcode: string; id: string }) => {
+      if (!actor) throw new Error("Actor not initialized");
+      return actor.approveReview(passcode, id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allReviews"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["approvedReviews"],
+        exact: false,
+      });
+    },
+  });
+}
+
+export function useRejectReview() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ passcode, id }: { passcode: string; id: string }) => {
+      if (!actor) throw new Error("Actor not initialized");
+      return actor.rejectReview(passcode, id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allReviews"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["approvedReviews"],
+        exact: false,
+      });
+    },
+  });
+}
+
+export function useDeleteReview() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ passcode, id }: { passcode: string; id: string }) => {
+      if (!actor) throw new Error("Actor not initialized");
+      return actor.deleteReview(passcode, id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allReviews"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["approvedReviews"],
+        exact: false,
+      });
+    },
+  });
+}
+
+export function useUpdateReview() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      passcode,
+      review,
+    }: { passcode: string; review: Review }) => {
+      if (!actor) throw new Error("Actor not initialized");
+      return actor.updateReview(passcode, review);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allReviews"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["approvedReviews"],
         exact: false,
       });
     },

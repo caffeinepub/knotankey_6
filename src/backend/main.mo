@@ -4,10 +4,11 @@ import Map "mo:core/Map";
 import List "mo:core/List";
 import Set "mo:core/Set";
 import Runtime "mo:core/Runtime";
-import Iter "mo:core/Iter";
-import Text "mo:core/Text";
-import Array "mo:core/Array";
 import Time "mo:core/Time";
+import Array "mo:core/Array";
+import Text "mo:core/Text";
+import Iter "mo:core/Iter";
+import Order "mo:core/Order";
 
 
 
@@ -81,16 +82,36 @@ actor {
     addedAt : Time.Time;
   };
 
+  public type Review = {
+    id : Text;
+    productId : Text;
+    productName : Text;
+    category : Text;
+    name : Text;
+    email : Text;
+    orderNumber : Text;
+    rating : Nat;
+    message : Text;
+    image : Storage.ExternalBlob;
+    status : Text;
+    createdAt : Time.Time;
+  };
+
   // Admin Passcode
   let adminPasscode = "knotankey_admin_2026";
 
-  // Persisted stable state
+  // Persistent State
   var products = Map.empty<Text, Product>();
   var orders = Map.empty<Text, Order>();
   var customOrderRequests = Map.empty<Text, CustomOrderRequest>();
   var returnRequests = Map.empty<Text, ReturnRequest>();
   var wishlist = Map.empty<Text, List.List<WishlistItem>>();
   var categories = Set.empty<Text>();
+  var reviews = Map.empty<Text, Review>();
+
+  func compareCreatedAtDescending(a : Review, b : Review) : Order.Order {
+    Int.compare(b.createdAt, a.createdAt);
+  };
 
   // Product CRUD Operations
   public shared ({ caller }) func createProduct(passcode : Text, product : Product) : async () {
@@ -250,6 +271,64 @@ actor {
         );
         wishlist.add(email, updatedItems);
       };
+    };
+  };
+
+  // Reviews Section
+
+  public shared ({ caller }) func submitReview(review : Review) : async () {
+    let newReview : Review = { review with status = "pending" };
+    reviews.add(review.id, newReview);
+  };
+
+  public shared ({ caller }) func getApprovedReviews() : async [Review] {
+    reviews.values().toArray().filter(func(r) { r.status == "approved" }).sort(compareCreatedAtDescending);
+  };
+
+  public shared ({ caller }) func getApprovedReviewsByProduct(productId : Text) : async [Review] {
+    reviews.values().toArray().filter(func(r) { r.status == "approved" and Text.equal(r.productId, productId) }).sort(compareCreatedAtDescending);
+  };
+
+  public shared ({ caller }) func getAllReviews(passcode : Text) : async [Review] {
+    requireAdmin(passcode);
+    reviews.values().toArray().sort(compareCreatedAtDescending);
+  };
+
+  public shared ({ caller }) func approveReview(passcode : Text, id : Text) : async () {
+    requireAdmin(passcode);
+    switch (reviews.get(id)) {
+      case (null) { Runtime.trap("Review not found") };
+      case (?review) {
+        let approvedReview = { review with status = "approved" };
+        reviews.add(id, approvedReview);
+      };
+    };
+  };
+
+  public shared ({ caller }) func rejectReview(passcode : Text, id : Text) : async () {
+    requireAdmin(passcode);
+    switch (reviews.get(id)) {
+      case (null) { Runtime.trap("Review not found") };
+      case (?review) {
+        let rejectedReview = { review with status = "rejected" };
+        reviews.add(id, rejectedReview);
+      };
+    };
+  };
+
+  public shared ({ caller }) func deleteReview(passcode : Text, id : Text) : async () {
+    requireAdmin(passcode);
+    switch (reviews.get(id)) {
+      case (null) { Runtime.trap("Review not found") };
+      case (?_review) { reviews.remove(id) };
+    };
+  };
+
+  public shared ({ caller }) func updateReview(passcode : Text, review : Review) : async () {
+    requireAdmin(passcode);
+    switch (reviews.get(review.id)) {
+      case (null) { Runtime.trap("Review not found") };
+      case (?_existingReview) { reviews.add(review.id, review) };
     };
   };
 

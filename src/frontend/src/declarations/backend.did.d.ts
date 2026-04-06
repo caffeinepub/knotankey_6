@@ -66,6 +66,20 @@ export interface ReturnRequest {
   'orderNumber' : string,
   'reason' : string,
 }
+export interface Review {
+  'id' : string,
+  'status' : string,
+  'name' : string,
+  'createdAt' : Time,
+  'productId' : string,
+  'productName' : string,
+  'email' : string,
+  'message' : string,
+  'category' : string,
+  'rating' : bigint,
+  'image' : ExternalBlob,
+  'orderNumber' : string,
+}
 export type Time = bigint;
 export interface WishlistItem {
   'productId' : string,
@@ -101,6 +115,7 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   'addCategory' : ActorMethod<[string, string], undefined>,
   'addToWishlist' : ActorMethod<[string, string], undefined>,
+  'approveReview' : ActorMethod<[string, string], undefined>,
   'createCustomOrderRequest' : ActorMethod<[CustomOrderRequest], undefined>,
   'createOrder' : ActorMethod<[Order], string>,
   'createProduct' : ActorMethod<[string, Product], undefined>,
@@ -109,7 +124,11 @@ export interface _SERVICE {
     undefined
   >,
   'deleteProduct' : ActorMethod<[string, string], undefined>,
+  'deleteReview' : ActorMethod<[string, string], undefined>,
   'filterProductsByCategory' : ActorMethod<[string], Array<Product>>,
+  'getAllReviews' : ActorMethod<[string], Array<Review>>,
+  'getApprovedReviews' : ActorMethod<[], Array<Review>>,
+  'getApprovedReviewsByProduct' : ActorMethod<[string], Array<Review>>,
   'getBestSellers' : ActorMethod<[], Array<Product>>,
   'getCategories' : ActorMethod<[], Array<string>>,
   'getCustomOrderRequests' : ActorMethod<[string], Array<CustomOrderRequest>>,
@@ -119,10 +138,13 @@ export interface _SERVICE {
   'getProducts' : ActorMethod<[], Array<Product>>,
   'getReturnRequests' : ActorMethod<[string], Array<ReturnRequest>>,
   'getWishlist' : ActorMethod<[string], Array<WishlistItem>>,
+  'rejectReview' : ActorMethod<[string, string], undefined>,
   'removeCategory' : ActorMethod<[string, string], undefined>,
   'removeFromWishlist' : ActorMethod<[string, string], undefined>,
+  'submitReview' : ActorMethod<[Review], undefined>,
   'updateOrderStatus' : ActorMethod<[string, string, string], undefined>,
   'updateProduct' : ActorMethod<[string, Product], undefined>,
+  'updateReview' : ActorMethod<[string, Review], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
